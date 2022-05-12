@@ -9,16 +9,13 @@ type Message = {
   time?: string
 }
 
-function App() {
+const App = () => {
   const [myClientId, setMyClientId] = useState(Math.floor(new Date().getTime() / 1000))
 
-  // const [chatHistory, setChatHistory] = useState([])
-  // const [isOnline, setIsOnline] = useState(false)
-  // const [textValue, setTextValue] = useState('')
   const [websckt, setWebsckt] = useState<WebSocket>()
 
   const [message, setMessage] = useState<string>('')
-  const [messages, setMessages] = useState<Message[]>([])
+  const [chatHistory, setChatHistory] = useState<Message[]>([])
 
   useEffect(() => {
     const url = 'ws://localhost:8000/ws/' + myClientId
@@ -29,13 +26,23 @@ function App() {
       ws.send(JSON.stringify(connectMessage))
     }
 
-    ws.onmessage = (e) => {
-      handleReceivedMessage(JSON.parse(e.data))
-    }
     setWebsckt(ws)
 
     return () => ws.close()
-  }, [])
+  }, [myClientId])
+
+  useEffect(() => {
+    const handleReceivedMessage = (message: Message) => {
+      setChatHistory([...chatHistory, message])
+    }
+
+    if (!websckt) return
+
+    websckt.onmessage = (e) => {
+      const message = JSON.parse(e.data)
+      handleReceivedMessage(message)
+    }
+  }, [websckt, chatHistory])
 
   const sendTextMessage = () => {
     if (websckt && message) {
@@ -45,13 +52,13 @@ function App() {
         message: message,
       }
       websckt.send(JSON.stringify(outMessage))
-      setMessages([...messages, outMessage])
       setMessage('')
     }
   }
 
   const handleReceivedMessage = (message: Message) => {
-    setMessages([...messages, message])
+    console.log(myClientId)
+    setChatHistory([...chatHistory, message])
   }
 
   const renderedMessage = (
@@ -77,7 +84,7 @@ function App() {
       <h1>Chat</h1>
       <h2>Your client id: {myClientId} </h2>
       <div className='chat-container'>
-        <div className='chat'>{messages.map(renderedMessage)}</div>
+        <div className='chat'>{chatHistory.map(renderedMessage)}</div>
         <div className='input-chat-container'>
           <input
             className='input-chat'
