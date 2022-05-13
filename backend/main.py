@@ -57,10 +57,10 @@ async def create_room(data: CreateRoomModel):
 async def join_room(data: JoinRoomModel):
     room_id = data.room_id
     game_room = game_room_manager.get_room(room_id)
-    game_room.add_client(data.name, data.client_id, data.speckle_email)
-
     if game_room is None:
         return {"room_id": None, "error": "Room does not exist"}
+
+    game_room.add_client(data.name, data.client_id, data.speckle_email)
 
     return {
         "room_id": game_room.room_id,
@@ -72,6 +72,9 @@ async def join_room(data: JoinRoomModel):
 @app.get("/latest-commit/{room_id}")
 def latest_commit(room_id: str):
     game_room = game_room_manager.get_room(room_id)
+    if game_room is None:
+        return {"room_id": None, "error": "Room does not exist"}
+
     latest_commit = game_room.speckle_manager.get_latest_commit()
     if latest_commit is None:
         return {"latest_commit_id": None}
@@ -84,6 +87,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
     current_time = now.strftime("%H:%M")
 
     game_room = game_room_manager.get_room(room_id)
+    if game_room is None:
+        return {"room_id": None, "error": "Room does not exist"}
 
     await connection_manager.connect(client_id, websocket)
 
@@ -95,6 +100,6 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
             await game_room.broadcast(json.dumps(message))
 
     except WebSocketDisconnect:
-        connection_manager.disconnect(client_id)
+        await connection_manager.disconnect(client_id)
         message = {"time": current_time, "type": "disconnected", "message": "Offline"}
         await game_room.broadcast(json.dumps(message))
