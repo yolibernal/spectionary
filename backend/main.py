@@ -105,6 +105,13 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
         while True:
             data = await websocket.receive_json()
             user = game_room.get_user(client_id)
+
+            if (
+                data.get("type", None) == "message"
+                and data.get("message", None) is not None
+            ):
+                await game_room.check_solution(client_id, data)
+
             message = {**data, "time": current_time, "name": user.name}
             await game_room.broadcast(json.dumps(message))
 
