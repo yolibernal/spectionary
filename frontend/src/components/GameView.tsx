@@ -37,7 +37,7 @@ export const GameView: FunctionComponent<{
   const [stopTimer, setStopTimer] = useState<boolean>(false)
 
   useEffect(() => {
-    const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
+    const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
     const ws = new WebSocket(url)
 
     ws.onopen = () => {
