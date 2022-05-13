@@ -10,12 +10,14 @@ from connection_manager import ConnectionManager
 
 class SpeckleGameManager:
     stream_name: str
+    access_token: str
     collaborator_emails: List[str]
     client: SpeckleClient
     stream: Resource
 
     def __init__(self, access_token, stream_name):
         self.stream_name = stream_name
+        self.access_token = access_token
 
         self.client = SpeckleClient()
         self.client.authenticate_with_token(access_token)
@@ -75,11 +77,12 @@ class GameRoom:
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
-            access_token=access_token, stream_name=stream_name
+            access_token=access_token,
+            stream_name=stream_name,
         )
 
     def initialize(self):
-        self.speckle_manager.initialize_stream()
+        self.stream = self.speckle_manager.initialize_stream()
 
     def add_client(self, client_id: str, speckle_email: str):
         self.speckle_manager.add_collaborators([speckle_email])
@@ -120,6 +123,12 @@ class GameRoomManager:
 
     def get_room(self, room_id: str) -> Optional[GameRoom]:
         return self.rooms.get(room_id, None)
+
+    def get_room_by_stream_id(self, stream_id: str) -> Optional[GameRoom]:
+        found = [
+            r for r in self.rooms.values() if r.speckle_manager.stream.id == stream_id
+        ]
+        return found[0] if found else None
 
     def delete_room(self, room_id: str) -> None:
         game_room = self.get_room(room_id)

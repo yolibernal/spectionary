@@ -1,17 +1,26 @@
 import json
+import os
 from datetime import datetime
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from connection_manager import ConnectionManager
 from game_logic import GameRoomManager
+from webhook_manager import SpeckleWebhookManager
+
+load_dotenv()
+
+server_url = os.environ["SERVER_URL"]
 
 app = FastAPI()
 
 connection_manager = ConnectionManager()
 game_room_manager = GameRoomManager(connection_manager)
+webhook_manager = SpeckleWebhookManager(game_room_manager=game_room_manager)
+app.include_router(webhook_manager.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +50,11 @@ async def create_room(data: CreateRoomModel):
         access_token=data.access_token, stream_name=data.stream_name
     )
     game_room.add_client(data.client_id, data.speckle_email)
+    webhook_manager.setup_webhook(
+        access_token=data.access_token,
+        stream_id=game_room.speckle_manager.stream.id,
+        server_url=server_url,
+    )
 
     return {
         "room_id": game_room.room_id,

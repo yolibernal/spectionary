@@ -3,4 +3,5 @@ export type Message = {
   type: "message" | "connected" | "disconnected" | "new_commit"
   message?: string
   time?: string
+  data?: any
 }
