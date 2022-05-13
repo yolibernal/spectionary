@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react"
-import { Message } from "./App"
+import { Message } from "../Message"
 
 export const MessageBubble: FunctionComponent<{
-  myClientId: number
+  myClientId: string
   message: Message
 }> = ({ message, myClientId }) => {
   const { type, clientId } = message

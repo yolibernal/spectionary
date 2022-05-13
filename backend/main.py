@@ -1,10 +1,12 @@
 import json
+import uuid
 from datetime import datetime
 from typing import List
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -15,6 +17,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+class CreateRoomModel(BaseModel):
+    client_id: str
+
+
+class GameRoom:
+    def __init__(self):
+        self.room_id = str(uuid.uuid4())
 
 
 class ConnectionManager:
@@ -39,20 +50,21 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@app.get("/")
-async def get():
-    return "Welcome Home"
+@app.post("/create-room")
+async def create_room(data: CreateRoomModel):
+    game_room = GameRoom()
+
+    return {"room_id": game_room.room_id}
 
 
-@app.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
+@app.websocket("/ws/{room_id}/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
     await manager.connect(websocket)
     now = datetime.now()
     current_time = now.strftime("%H:%M")
     try:
         while True:
             data = await websocket.receive_json()
-            # await manager.send_personal_message(f"You wrote: {data}", websocket)
             message = {**data, "time": current_time}
             await manager.broadcast(json.dumps(message))
 
