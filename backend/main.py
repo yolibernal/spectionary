@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Commit
@@ -133,3 +134,14 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
         await connection_manager.disconnect(client_id)
         message = {"time": current_time, "type": "disconnected", "message": "Offline"}
         await game_room.broadcast(json.dumps(message))
+
+from fastapi.staticfiles import StaticFiles
+
+class SPAStaticFiles(StaticFiles):
+    async def get_response(self, path: str, scope):
+        response = await super().get_response(path, scope)
+        if response.status_code == 404:
+            response = await super().get_response('.', scope)
+        return response
+
+app.mount('/', SPAStaticFiles(directory='../frontend/build', html=True), name='react')
