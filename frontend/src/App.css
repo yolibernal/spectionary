@@ -1,3 +1,10 @@
+#root {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #e2e2e2;
+}
+
 .App {
   text-align: center;
 }
@@ -43,33 +50,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #e2e2e2;
-}
-
-.chat-container {
-  box-shadow: 10px 10px;
-  max-width: 500px;
-  max-height: 500px;
-  border: 1px solid;
-}
-
-.chat {
-  padding: 10px;
-  width: 400px;
-  height: 400px;
-  background-color: rgb(77, 168, 253, 0.6);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.chat::-webkit-scrollbar {
-  display: none;
-  /* Chrome */
 }
 
 .input-chat-container {
@@ -102,9 +82,12 @@
   background-color: rgb(0, 55, 128);
   outline: none;
   border: 1px solid rgb(0, 55, 128);
+  height: 48px;
   cursor: pointer;
   margin-left: 5px;
   color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .submit-chat:hover {

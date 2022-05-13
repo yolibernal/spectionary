@@ -3,7 +3,14 @@ import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
 import { User } from "../User"
 import { MessageBubble } from "./MessageBubble"
-import { CopyRoom, GameBox, GameViewContainer, ViewerBox } from "./styles"
+import {
+  Chat,
+  ChatContainer,
+  CopyRoom,
+  GameBox,
+  GameViewContainer,
+  ViewerBox,
+} from "./styles"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -107,8 +114,8 @@ export const GameView: FunctionComponent<{
           </button>
         </ViewerBox>
 
-        <div className="chat-container">
-          <div className="chat">
+        <ChatContainer>
+          <Chat>
             {messages.map((message, index) => (
               <MessageBubble
                 message={message}
@@ -116,7 +123,7 @@ export const GameView: FunctionComponent<{
                 key={index}
               />
             ))}
-          </div>
+          </Chat>
           <div className="input-chat-container">
             <input
               className="input-chat"
@@ -132,7 +139,7 @@ export const GameView: FunctionComponent<{
               Next round
             </button>
           </div>
-        </div>
+        </ChatContainer>
       </GameBox>
     </GameViewContainer>
   )
