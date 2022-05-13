@@ -1,6 +1,7 @@
 import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
+import { User } from "../User"
 import { MessageBubble } from "./MessageBubble"
 
 export const GameView: FunctionComponent<{
@@ -14,6 +15,8 @@ export const GameView: FunctionComponent<{
   const [messages, setMessages] = useState<Message[]>([])
 
   const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
     const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
@@ -34,6 +37,10 @@ export const GameView: FunctionComponent<{
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
+      console.log(message)
+      if (message.type === "new_round" && message.user) {
+        setCurrentUser(message.user)
+      }
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
       }
@@ -62,11 +69,16 @@ export const GameView: FunctionComponent<{
     setMessage("")
   }
 
+  const startNextRound = async () => {
+    const response = await axios.post(`/next-round/${roomId}`)
+  }
+
   return (
     <div className="container">
       <h1>Chat</h1>
       <h2>Your client id: {myClientId} </h2>
       <h2>Your room id: {roomId} </h2>
+      <h2>Current turn: {currentUser?.name} </h2>
       <div className="chat-container">
         <div className="chat">
           {messages.map((message, index) => (
@@ -87,6 +99,9 @@ export const GameView: FunctionComponent<{
           ></input>
           <button className="submit-chat" onClick={sendTextMessage}>
             Send
+          </button>
+          <button className="submit-chat" onClick={startNextRound}>
+            Next round
           </button>
         </div>
       </div>
