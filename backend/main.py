@@ -22,6 +22,7 @@ app.add_middleware(
 
 
 class CreateRoomModel(BaseModel):
+    name: str
     client_id: str
     speckle_email: EmailStr
     stream_name: str
@@ -29,6 +30,7 @@ class CreateRoomModel(BaseModel):
 
 
 class JoinRoomModel(BaseModel):
+    name: str
     client_id: str
     room_id: str
     speckle_email: EmailStr
@@ -78,10 +80,17 @@ class SpeckleGameManager:
         self.client.stream.delete(self.stream.id)
 
 
+class User:
+    def __init__(self, client_id, name, speckle_email):
+        self.client_id = client_id
+        self.name = name
+        self.speckle_email = speckle_email
+
+
 class GameRoom:
     def __init__(self, room_id: str, access_token: str, stream_name: str):
         self.room_id = room_id
-        self.client_ids = []
+        self.users: Dict[str, User] = {}
 
         self.speckle_manager = SpeckleGameManager(
             access_token=access_token, stream_name=stream_name
@@ -90,14 +99,17 @@ class GameRoom:
     def initialize(self):
         self.speckle_manager.initialize_stream()
 
-    def add_client(self, client_id: str, speckle_email: str):
+    def add_client(self, name: str, client_id: str, speckle_email: str):
+        user = User(client_id, name, speckle_email)
         self.speckle_manager.add_collaborators([speckle_email])
-        if client_id in self.client_ids:
-            return
-        self.client_ids.append(client_id)
+        self.users[client_id] = user
 
     async def broadcast(self, message: str):
-        await connection_manager.broadcast_to_clients(self.client_ids, message)
+        client_ids = self.users.keys()
+        await connection_manager.broadcast_to_clients(client_ids, message)
+
+    def get_user(self, client_id: str):
+        return self.users.get(client_id, None)
 
     def terminate(self):
         self.speckle_manager.delete_stream()
@@ -168,7 +180,7 @@ async def create_room(data: CreateRoomModel):
     game_room = game_room_manager.create_room(
         access_token=data.access_token, stream_name=data.stream_name
     )
-    game_room.add_client(data.client_id, data.speckle_email)
+    game_room.add_client(data.name, data.client_id, data.speckle_email)
 
     return {
         "room_id": game_room.room_id,
@@ -180,7 +192,7 @@ async def create_room(data: CreateRoomModel):
 async def join_room(data: JoinRoomModel):
     room_id = data.room_id
     game_room = game_room_manager.get_room(room_id)
-    game_room.add_client(data.client_id, data.speckle_email)
+    game_room.add_client(data.name, data.client_id, data.speckle_email)
 
     if game_room is None:
         return {"room_id": None, "error": "Room does not exist"}
@@ -213,7 +225,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
     try:
         while True:
             data = await websocket.receive_json()
-            message = {**data, "time": current_time}
+            user = game_room.get_user(client_id)
+            message = {**data, "time": current_time, "name": user.name}
             await game_room.broadcast(json.dumps(message))
 
     except WebSocketDisconnect:

@@ -12,6 +12,7 @@ export const JoinRoomView: FunctionComponent<{
   setStreamId: Dispatch<SetStateAction<string | null>>
 }> = ({ clientId, setRoomId, setStreamId }) => {
   const [joinRoomId, setJoinRoomId] = useState<string | null>(null)
+  const [name, setName] = useState<string | null>(null)
   const [speckleEmail, setSpeckleEmail] = useState<string | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [streamName, setStreamName] = useState<string | null>(null)
@@ -19,6 +20,13 @@ export const JoinRoomView: FunctionComponent<{
     <div className="container">
       <div>
         <h2>User</h2>
+        <input
+          className="input-chat"
+          type="text"
+          placeholder="Name"
+          onChange={(e) => setName(e.target.value)}
+          value={name || ""}
+        ></input>
         <input
           className="input-chat"
           type="text"
@@ -46,6 +54,7 @@ export const JoinRoomView: FunctionComponent<{
           className="submit"
           onClick={async () => {
             const response = await axios.post("/create-room", {
+              name: name,
               client_id: clientId,
               access_token: accessToken,
               stream_name: streamName,
@@ -73,6 +82,7 @@ export const JoinRoomView: FunctionComponent<{
           className="submit"
           onClick={async () => {
             const response = await axios.post("/join-room", {
+              name: name,
               client_id: clientId,
               room_id: joinRoomId,
               speckle_email: speckleEmail,
