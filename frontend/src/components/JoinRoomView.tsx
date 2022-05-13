@@ -15,7 +15,7 @@ export const JoinRoomView: FunctionComponent<{
   roomId: string
 }> = ({ clientId, setRoomId, setStreamId, roomId }) => {
   const [speckleEmail, setSpeckleEmail] = useState<string>("")
-
+  const [name, setName] = useState<string>("")
   return (
     <div className="container">
       <InputUser
@@ -24,12 +24,15 @@ export const JoinRoomView: FunctionComponent<{
         roomId={roomId}
         clientId={clientId}
         setStreamId={setStreamId}
+        name={name}
+        setName={setName}
       />
       {!roomId && (
         <CreateRoom
           setRoomId={setRoomId}
           setStreamId={setStreamId}
           speckleEmail={speckleEmail}
+          name={name}
           clientId={clientId}
         />
       )}
@@ -38,6 +41,7 @@ export const JoinRoomView: FunctionComponent<{
         <JoinRoom
           clientId={clientId}
           speckleEmail={speckleEmail}
+          name={name}
           setRoomId={setRoomId}
         />
       )}

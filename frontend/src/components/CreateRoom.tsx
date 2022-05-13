@@ -6,12 +6,14 @@ interface Props {
   setStreamId: Dispatch<SetStateAction<string>>
   speckleEmail: string
   clientId: string
+  name: string
 }
 export const CreateRoom: FunctionComponent<Props> = ({
   setRoomId,
   setStreamId,
   speckleEmail,
   clientId,
+  name,
 }) => {
   const [accessToken, setAccessToken] = useState<string>("")
   const [streamName, setStreamName] = useState<string>("")
@@ -40,6 +42,7 @@ export const CreateRoom: FunctionComponent<Props> = ({
             access_token: accessToken,
             stream_name: streamName,
             speckle_email: speckleEmail,
+            name: name,
           })
           const { room_id, stream_id } = response.data
           setRoomId(room_id)

@@ -5,12 +5,14 @@ interface Props {
   clientId: string
   speckleEmail: string
   setRoomId: Dispatch<SetStateAction<string>>
+  name: string
 }
 
 export const JoinRoom: FunctionComponent<Props> = ({
   clientId,
   speckleEmail,
   setRoomId,
+  name,
 }) => {
   const [joinRoomId, setJoinRoomId] = useState<string>("")
 
@@ -32,6 +34,7 @@ export const JoinRoom: FunctionComponent<Props> = ({
               client_id: clientId,
               room_id: joinRoomId,
               speckle_email: speckleEmail,
+              name: name,
             })
             const { room_id, stream_id } = response.data
             setRoomId(room_id)

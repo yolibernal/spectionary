@@ -7,6 +7,8 @@ interface Props {
   setStreamId: Dispatch<SetStateAction<string>>
   roomId: string
   clientId: string
+  setName: Dispatch<SetStateAction<string>>
+  name: string
 }
 export const InputUser: FunctionComponent<Props> = ({
   speckleEmail,
@@ -14,6 +16,8 @@ export const InputUser: FunctionComponent<Props> = ({
   setStreamId,
   roomId,
   clientId,
+  setName,
+  name,
 }) => {
   return (
     <div>
@@ -21,9 +25,16 @@ export const InputUser: FunctionComponent<Props> = ({
       <input
         className="input-chat"
         type="text"
+        placeholder="Name"
+        onChange={(e) => setName(e.target.value)}
+        value={name}
+      />
+      <input
+        className="input-chat"
+        type="text"
         placeholder="Speckle email"
         onChange={(e) => setSpeckleEmail(e.target.value)}
-        value={speckleEmail || ""}
+        value={speckleEmail}
       />
       {roomId && (
         <button
@@ -33,8 +44,10 @@ export const InputUser: FunctionComponent<Props> = ({
               client_id: clientId,
               room_id: roomId,
               speckle_email: speckleEmail,
+              name: name,
             })
             const { room_id, stream_id } = response.data
+            console.log(response.data)
             setStreamId(stream_id)
           }}
         >
