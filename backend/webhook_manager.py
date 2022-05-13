@@ -52,9 +52,17 @@ class SpeckleWebhookManager:
 
     async def do_something_with_the_event(self, data):
         payload = json.loads(data["payload"])
-        if not payload["event"]["event_name"]:
-            return
         room = self.game_room_manager.get_room_by_stream_id(payload["streamId"])
+        current_user = room.get_current_user()
+
+        if not current_user:
+            return
+        if current_user.speckle_id != payload["userId"]:
+            return
+        if payload["event"]["event_name"] != "commit_create":
+            return
+        if payload["event"]["data"]["commit"]["branchName"] != "main":
+            return
 
         now = datetime.now()
         current_time = now.strftime("%H:%M")

@@ -19,6 +19,7 @@ class User(BaseModel):
     client_id: str
     name: str
     speckle_email: str
+    speckle_id: str
 
 
 class SpeckleGameManager:
