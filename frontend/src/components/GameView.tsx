@@ -51,7 +51,12 @@ export const GameView: FunctionComponent<{
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
-      console.log(message)
+      if (message.type === "solved") {
+        console.log("SOLVED by", message.user)
+      }
+      if (message.type === "timeout") {
+        console.log("TIMEOUTED by", message.user)
+      }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
       }

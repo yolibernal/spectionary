@@ -1,4 +1,5 @@
 import json
+import random
 import uuid
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -9,6 +10,8 @@ from specklepy.api.models import Commit
 from specklepy.api.resources.stream import Resource
 
 from connection_manager import ConnectionManager
+from timer import Timer
+from words import words
 
 
 class User(BaseModel):
@@ -81,7 +84,10 @@ class GameRoom:
     ):
         self.room_id = room_id
         self.users: Dict[str, User] = {}
+
         self.current_user_index = None
+        self.current_solution = None
+        self.current_timeout = None
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
@@ -111,6 +117,17 @@ class GameRoom:
             return None
         return list(self.users.values())[self.current_user_index]
 
+    async def timeout_round(self):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        message = {
+            "type": "timeout",
+            "time": current_time,
+            "user": self.get_current_user().dict(),
+        }
+        await self.broadcast(json.dumps(message))
+
     async def next_turn(self):
         now = datetime.now()
         current_time = now.strftime("%H:%M")
@@ -123,10 +140,34 @@ class GameRoom:
             self.current_user_index += 1
             self.current_user_index %= len(self.users)
 
+        self.current_solution = random.choice(words)
+        print("CURRENT SOLUTION", self.current_solution)
+
+        if self.current_timeout is not None:
+            self.current_timeout.cancel()
+        self.current_timeout = Timer(60 * 5, self.timeout_round)
+
         message = {
             "type": "new_round",
             "time": current_time,
-            "user": self.get_current_user().dict    (),
+            "user": self.get_current_user().dict(),
+        }
+        await self.broadcast(json.dumps(message))
+
+    async def check_solution(self, client_id, message):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        if self.current_solution is None:
+            return
+        if message.get("message", None) != self.current_solution:
+            return
+
+        self.current_timeout.cancel()
+        message = {
+            "type": "solved",
+            "time": current_time,
+            "user": self.get_user(client_id).dict(),
         }
         await self.broadcast(json.dumps(message))
 
