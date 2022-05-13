@@ -1,7 +1,7 @@
 import axios from "axios"
 import React, { Dispatch, FunctionComponent, SetStateAction } from "react"
 
-export const CreateRoomView: FunctionComponent<{
+export const JoinRoomView: FunctionComponent<{
   clientId: string
   setRoomId: Dispatch<SetStateAction<string | null>>
 }> = ({ clientId, setRoomId }) => {
