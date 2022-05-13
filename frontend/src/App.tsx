@@ -8,12 +8,19 @@ const App = () => {
   const [myClientId, setMyClientId] = useState(uuidv4())
 
   const [roomId, setRoomId] = useState<string | null>(null)
+  const [streamId, setStreamId] = useState<string | null>(null)
 
-  if (!roomId) {
-    return <JoinRoomView clientId={myClientId} setRoomId={setRoomId} />
+  if (!roomId || !streamId) {
+    return (
+      <JoinRoomView
+        clientId={myClientId}
+        setRoomId={setRoomId}
+        setStreamId={setStreamId}
+      />
+    )
   }
 
-  return <GameView roomId={roomId} clientId={myClientId} />
+  return <GameView roomId={roomId} streamId={streamId} clientId={myClientId} />
 }
 
 export default App

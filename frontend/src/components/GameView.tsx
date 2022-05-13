@@ -1,3 +1,4 @@
+import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
 import { MessageBubble } from "./MessageBubble"
@@ -5,11 +6,14 @@ import { MessageBubble } from "./MessageBubble"
 export const GameView: FunctionComponent<{
   roomId: string
   clientId: string
-}> = ({ roomId, clientId: myClientId }) => {
+  streamId: string
+}> = ({ roomId, clientId: myClientId, streamId }) => {
   const [websckt, setWebsckt] = useState<WebSocket>()
 
   const [message, setMessage] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
+
+  const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
 
   useEffect(() => {
     const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
@@ -30,6 +34,9 @@ export const GameView: FunctionComponent<{
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
+      if (message.type === "new_commit") {
+        setLatestCommitId(message.message || null)
+      }
       setMessages([...messages, message])
     }
 
@@ -82,6 +89,25 @@ export const GameView: FunctionComponent<{
             Send
           </button>
         </div>
+      </div>
+      <div>
+        <h2>Viewer</h2>
+
+        <button
+          className="submit"
+          onClick={async () => {
+            const response = await axios.get(`/latest-commit/${roomId}`)
+            const { data } = response
+            setLatestCommitId(data.latest_commit_id)
+          }}
+        >
+          Check for commits
+        </button>
+        <iframe
+          src={`https://speckle.xyz/embed?stream=${streamId}&commit=${latestCommitId}`}
+          width="600"
+          height="400"
+        ></iframe>
       </div>
     </div>
   )

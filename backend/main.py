@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from specklepy.api.client import SpeckleClient
+from specklepy.api.models import Commit
 
 app = FastAPI()
 
@@ -66,6 +67,12 @@ class SpeckleGameManager:
                 self.stream.id, user.id, "stream:contributor"
             )
         self.collaborator_emails += collaborator_emails
+
+    def get_latest_commit(self) -> Commit:
+        commits = self.client.commit.list(self.stream.id)
+        if len(commits) == 0:
+            return None
+        return commits[0]
 
     def delete_stream(self):
         self.client.stream.delete(self.stream.id)
@@ -163,7 +170,10 @@ async def create_room(data: CreateRoomModel):
     )
     game_room.add_client(data.client_id, data.speckle_email)
 
-    return {"room_id": game_room.room_id}
+    return {
+        "room_id": game_room.room_id,
+        "stream_id": game_room.speckle_manager.stream.id,
+    }
 
 
 @app.post("/join-room")
@@ -175,7 +185,20 @@ async def join_room(data: JoinRoomModel):
     if game_room is None:
         return {"room_id": None, "error": "Room does not exist"}
 
-    return {"room_id": game_room.room_id}
+    return {
+        "room_id": game_room.room_id,
+        "stream_id": game_room.speckle_manager.stream.id,
+    }
+
+
+# Will probably be replaced by webhook
+@app.get("/latest-commit/{room_id}")
+def latest_commit(room_id: str):
+    game_room = game_room_manager.get_room(room_id)
+    latest_commit = game_room.speckle_manager.get_latest_commit()
+    if latest_commit is None:
+        return {"latest_commit_id": None}
+    return {"latest_commit_id": latest_commit.id}
 
 
 @app.websocket("/ws/{room_id}/{client_id}")

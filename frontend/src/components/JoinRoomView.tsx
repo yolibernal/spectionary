@@ -9,7 +9,8 @@ import React, {
 export const JoinRoomView: FunctionComponent<{
   clientId: string
   setRoomId: Dispatch<SetStateAction<string | null>>
-}> = ({ clientId, setRoomId }) => {
+  setStreamId: Dispatch<SetStateAction<string | null>>
+}> = ({ clientId, setRoomId, setStreamId }) => {
   const [joinRoomId, setJoinRoomId] = useState<string | null>(null)
   const [speckleEmail, setSpeckleEmail] = useState<string | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
@@ -44,17 +45,15 @@ export const JoinRoomView: FunctionComponent<{
         <button
           className="submit"
           onClick={async () => {
-            const response = await axios.post(
-              "http://localhost:8000/create-room",
-              {
-                client_id: clientId,
-                access_token: accessToken,
-                stream_name: streamName,
-                speckle_email: speckleEmail,
-              }
-            )
-            const { room_id: roomId } = response.data
-            setRoomId(roomId)
+            const response = await axios.post("/create-room", {
+              client_id: clientId,
+              access_token: accessToken,
+              stream_name: streamName,
+              speckle_email: speckleEmail,
+            })
+            const { room_id, stream_id } = response.data
+            setRoomId(room_id)
+            setStreamId(stream_id)
           }}
         >
           Create Game Room
@@ -73,16 +72,14 @@ export const JoinRoomView: FunctionComponent<{
         <button
           className="submit"
           onClick={async () => {
-            const response = await axios.post(
-              "http://localhost:8000/join-room",
-              {
-                client_id: clientId,
-                room_id: joinRoomId,
-                speckle_email: speckleEmail,
-              }
-            )
-            const { room_id } = response.data
+            const response = await axios.post("/join-room", {
+              client_id: clientId,
+              room_id: joinRoomId,
+              speckle_email: speckleEmail,
+            })
+            const { room_id, stream_id } = response.data
             setRoomId(room_id)
+            setStreamId(stream_id)
           }}
         >
           Join Game Room
