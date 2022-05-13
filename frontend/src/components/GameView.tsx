@@ -17,6 +17,7 @@ import {
   SubmitButton,
   ViewerBox,
 } from "./styles"
+import { Timer } from "./Timer"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -107,6 +108,9 @@ export const GameView: FunctionComponent<{
           </div>
         </StyledTitle>
         <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+        <StyledTitle>
+          Round Countdown: <Timer />
+        </StyledTitle>
         <GameBox>
           <ViewerBox>
             <iframe
