@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Commit
 
@@ -23,7 +23,7 @@ app.add_middleware(
 
 class CreateRoomModel(BaseModel):
     client_id: str
-    speckle_email: str
+    speckle_email: EmailStr
     stream_name: str
     access_token: str
 
@@ -31,7 +31,7 @@ class CreateRoomModel(BaseModel):
 class JoinRoomModel(BaseModel):
     client_id: str
     room_id: str
-    speckle_email: str
+    speckle_email: EmailStr
 
 
 class SpeckleGameManager:
