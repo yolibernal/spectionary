@@ -184,6 +184,7 @@ class GameRoom:
             "user": self.get_user(client_id).dict(),
         }
         await self.broadcast(json.dumps(message))
+        self.current_solution = None
 
 
 class GameRoomManager:

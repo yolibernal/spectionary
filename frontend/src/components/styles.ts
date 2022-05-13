@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Message } from "../Message"
 
 export const MainContainer = styled.div`
   display: flex;
@@ -135,4 +136,35 @@ export const SubmitButton = styled.button`
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+`
+
+export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ type }) => {
+    if (type === "new_round") {
+      return "rgb(0, 55, 128)"
+    }
+    if (type === "new_commit") {
+      return "#3c82f6"
+    }
+    if (type === "solved") {
+      return "rgb(77, 253, 215)"
+    }
+    if (type === "timeout") {
+      return "rgb(178,34,34)"
+    }
+    return "rgb(0, 55, 128)"
+  }};
+  color: ${({ type }) => {
+    if (type === "solved") {
+      return "black"
+    }
+    return "white"
+  }};
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `

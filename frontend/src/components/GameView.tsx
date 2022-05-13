@@ -63,7 +63,7 @@ export const GameView: FunctionComponent<{
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
       }
-      setMessages([...messages, message])
+      setMessages((messages) => [...messages, message])
     }
 
     if (!websocket) return
@@ -72,7 +72,7 @@ export const GameView: FunctionComponent<{
       const message = JSON.parse(e.data)
       handleReceivedMessage(message)
     }
-  }, [websocket, messages])
+  }, [websocket, messages, setMessages])
 
   const sendTextMessage = () => {
     if (!websocket || !message) {
