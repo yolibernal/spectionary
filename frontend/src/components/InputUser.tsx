@@ -47,7 +47,6 @@ export const InputUser: FunctionComponent<Props> = ({
               name: name,
             })
             const { room_id, stream_id } = response.data
-            console.log(response.data)
             setStreamId(stream_id)
           }}
         >

@@ -2,13 +2,14 @@ import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
 import { MessageBubble } from "./MessageBubble"
+import { CopyRoom, GameBox, GameViewContainer, ViewerBox } from "./styles"
 
 export const GameView: FunctionComponent<{
   roomId: string
   clientId: string
   streamId: string
 }> = ({ roomId, clientId: myClientId, streamId }) => {
-  const [websckt, setWebsckt] = useState<WebSocket>()
+  const [websocket, setWebsocket] = useState<WebSocket>()
 
   const [message, setMessage] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
@@ -19,7 +20,7 @@ export const GameView: FunctionComponent<{
     const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
     const ws = new WebSocket(url)
 
-    ws.onopen = (event) => {
+    ws.onopen = () => {
       const connectMessage: Message = {
         clientId: myClientId,
         type: "connected",
@@ -27,7 +28,7 @@ export const GameView: FunctionComponent<{
       ws.send(JSON.stringify(connectMessage))
     }
 
-    setWebsckt(ws)
+    setWebsocket(ws)
 
     return () => ws.close()
   }, [myClientId, roomId])
@@ -40,16 +41,16 @@ export const GameView: FunctionComponent<{
       setMessages([...messages, message])
     }
 
-    if (!websckt) return
+    if (!websocket) return
 
-    websckt.onmessage = (e) => {
+    websocket.onmessage = (e) => {
       const message = JSON.parse(e.data)
       handleReceivedMessage(message)
     }
-  }, [websckt, messages])
+  }, [websocket, messages])
 
   const sendTextMessage = () => {
-    if (!websckt || !message) {
+    if (!websocket || !message) {
       return
     }
 
@@ -58,7 +59,7 @@ export const GameView: FunctionComponent<{
       type: "message",
       message: message,
     }
-    websckt.send(JSON.stringify(outMessage))
+    websocket.send(JSON.stringify(outMessage))
     setMessage("")
   }
 
@@ -66,56 +67,57 @@ export const GameView: FunctionComponent<{
     navigator.clipboard.writeText(window.origin + "/" + roomId)
   }
   return (
-    <div className="container">
-      <h1>Chat</h1>
-      <h2>Your client id: {myClientId} </h2>
+    <GameViewContainer>
+      <h1>Spectionary</h1>
       <h2 onClick={copyToClipboard}>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          Click to copy room: <a href="#">{window.origin + "/" + roomId}</a>
-        </div>{" "}
+          Click to copy room:{" "}
+          <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
+        </div>
       </h2>
-      <div className="chat-container">
-        <div className="chat">
-          {messages.map((message, index) => (
-            <MessageBubble
-              message={message}
-              myClientId={myClientId}
-              key={index}
-            />
-          ))}
-        </div>
-        <div className="input-chat-container">
-          <input
-            className="input-chat"
-            type="text"
-            placeholder="Chat message ..."
-            onChange={(e) => setMessage(e.target.value)}
-            value={message}
-          ></input>
-          <button className="submit-chat" onClick={sendTextMessage}>
-            Send
+      <GameBox>
+        <ViewerBox>
+          <iframe
+            src={`https://speckle.xyz/embed?stream=${streamId}&commit=${latestCommitId}`}
+            width="800"
+            height="500"
+          />
+          <button
+            className="submit"
+            onClick={async () => {
+              const response = await axios.get(`/latest-commit/${roomId}`)
+              const { data } = response
+              setLatestCommitId(data.latest_commit_id)
+            }}
+          >
+            Check for commits
           </button>
-        </div>
-      </div>
-      <div>
-        <h2>Viewer</h2>
+        </ViewerBox>
 
-        <button
-          className="submit"
-          onClick={async () => {
-            const response = await axios.get(`/latest-commit/${roomId}`)
-            const { data } = response
-            setLatestCommitId(data.latest_commit_id)
-          }}
-        >
-          Check for commits
-        </button>
-        <iframe
-          src={`https://speckle.xyz/embed?stream=${streamId}&commit=${latestCommitId}`}
-          width="600"
-          height="400"
-        ></iframe>
-      </div>
-    </div>
+        <div className="chat-container">
+          <div className="chat">
+            {messages.map((message, index) => (
+              <MessageBubble
+                message={message}
+                myClientId={myClientId}
+                key={index}
+              />
+            ))}
+          </div>
+          <div className="input-chat-container">
+            <input
+              className="input-chat"
+              type="text"
+              placeholder="Chat message ..."
+              onChange={(e) => setMessage(e.target.value)}
+              value={message}
+            ></input>
+            <button className="submit-chat" onClick={sendTextMessage}>
+              Send
+            </button>
+          </div>
+        </div>
+      </GameBox>
+    </GameViewContainer>
   )
 }
