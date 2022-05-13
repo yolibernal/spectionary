@@ -104,6 +104,8 @@ export const Chat = styled.div`
 export const GameBox = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 `
 
 export const ViewerBox = styled.div`
