@@ -26,13 +26,13 @@ export const JoinRoomViewContainer = styled.div`
   flex-direction: column;
   margin: auto auto;
   & > * {
-    margin: 24px 0 24px 0;
+    margin: 12px 0 12px 0;
   }
   & > *:first-child {
-    margin: 0 0 24px 0;
+    margin: 0 0 12px 0;
   }
   & > *:last-child {
-    margin: 24px 0 0 0;
+    margin: 12px 0 0 0;
   }
 `
 
@@ -41,6 +41,9 @@ export const StyledInput = styled.input`
   color: #171821;
   font-size: 16px;
   padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
 `
 
 export const Divider = styled.div`
@@ -136,6 +139,7 @@ export const SubmitButton = styled.button`
   color: white;
   font-size: 16px;
   font-weight: bold;
+  padding: 0px 16px;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
