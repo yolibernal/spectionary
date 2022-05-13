@@ -1,6 +1,7 @@
 import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
+import { User } from "../User"
 import { MessageBubble } from "./MessageBubble"
 import { CopyRoom, GameBox, GameViewContainer, ViewerBox } from "./styles"
 
@@ -15,6 +16,8 @@ export const GameView: FunctionComponent<{
   const [messages, setMessages] = useState<Message[]>([])
 
   const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
     const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
@@ -35,6 +38,10 @@ export const GameView: FunctionComponent<{
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
+      console.log(message)
+      if (message.type === "new_round" && message.user) {
+        setCurrentUser(message.user)
+      }
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
       }
@@ -63,9 +70,14 @@ export const GameView: FunctionComponent<{
     setMessage("")
   }
 
+  const startNextRound = async () => {
+    const response = await axios.post(`/next-round/${roomId}`)
+  }
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(window.origin + "/" + roomId)
   }
+
   return (
     <GameViewContainer>
       <h1>Spectionary</h1>
@@ -75,6 +87,7 @@ export const GameView: FunctionComponent<{
           <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
         </div>
       </h2>
+      <h2>Current turn: {currentUser?.name} </h2>
       <GameBox>
         <ViewerBox>
           <iframe
@@ -114,6 +127,9 @@ export const GameView: FunctionComponent<{
             ></input>
             <button className="submit-chat" onClick={sendTextMessage}>
               Send
+            </button>
+            <button className="submit-chat" onClick={startNextRound}>
+              Next round
             </button>
           </div>
         </div>

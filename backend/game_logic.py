@@ -1,6 +1,9 @@
+import json
 import uuid
+from datetime import datetime
 from typing import Dict, List, Optional
 
+from pydantic import BaseModel
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Commit
 from specklepy.api.resources.stream import Resource
@@ -8,11 +11,10 @@ from specklepy.api.resources.stream import Resource
 from connection_manager import ConnectionManager
 
 
-class User:
-    def __init__(self, client_id, name, speckle_email):
-        self.client_id = client_id
-        self.name = name
-        self.speckle_email = speckle_email
+class User(BaseModel):
+    client_id: str
+    name: str
+    speckle_email: str
 
 
 class SpeckleGameManager:
@@ -79,6 +81,7 @@ class GameRoom:
     ):
         self.room_id = room_id
         self.users: Dict[str, User] = {}
+        self.current_user_index = None
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
@@ -89,7 +92,7 @@ class GameRoom:
         self.speckle_manager.initialize_stream()
 
     def add_client(self, name: str, client_id: str, speckle_email: str):
-        user = User(client_id, name, speckle_email)
+        user = User(client_id=client_id, name=name, speckle_email=speckle_email)
         self.speckle_manager.add_collaborators([speckle_email])
         self.users[client_id] = user
 
@@ -102,6 +105,30 @@ class GameRoom:
 
     def terminate(self):
         self.speckle_manager.delete_stream()
+
+    def get_current_user(self):
+        if self.current_user_index is None:
+            return None
+        return list(self.users.values())[self.current_user_index]
+
+    async def next_turn(self):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        if len(self.users) == 0:
+            raise Exception("No users in room")
+        if self.current_user_index is None:
+            self.current_user_index = 0
+        else:
+            self.current_user_index += 1
+            self.current_user_index %= len(self.users)
+
+        message = {
+            "type": "new_round",
+            "time": current_time,
+            "user": self.get_current_user().dict    (),
+        }
+        await self.broadcast(json.dumps(message))
 
 
 class GameRoomManager:

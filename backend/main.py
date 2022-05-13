@@ -68,6 +68,15 @@ async def join_room(data: JoinRoomModel):
     }
 
 
+@app.post("/next-round/{room_id}")
+async def next_round(room_id: str):
+    game_room = game_room_manager.get_room(room_id)
+    if game_room is None:
+        return {"user_id": None, "room_id": None, "error": "Room does not exist"}
+    await game_room.next_turn()
+    return {"client_id": game_room.get_current_user().client_id}
+
+
 # Will probably be replaced by webhook
 @app.get("/latest-commit/{room_id}")
 def latest_commit(room_id: str):
