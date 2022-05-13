@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import { v4 as uuidv4 } from "uuid"
+import React, { useEffect, useState } from "react"
+import { v4 as uuidv4, validate } from "uuid"
 import "./App.css"
 import { GameView } from "./components/GameView"
 import { JoinRoomView } from "./components/JoinRoomView"
@@ -21,14 +21,20 @@ const useLocalStorage = (storageKey: string, fallbackState: any) => {
 const App = () => {
   const [myClientId, setMyClientId] = useLocalStorage("clientId", uuidv4())
 
-  const [roomId, setRoomId] = useState<string | null>(null)
-  const [streamId, setStreamId] = useState<string | null>(null)
+  const [roomId, setRoomId] = useState<string>("")
+  const [streamId, setStreamId] = useState<string>("")
+
+  useEffect(() => {
+    const urlUUID = window.location.pathname.split("/")[1]
+    if (validate(urlUUID)) setRoomId(urlUUID)
+  }, [])
 
   if (!roomId || !streamId) {
     return (
       <JoinRoomView
         clientId={myClientId}
         setRoomId={setRoomId}
+        roomId={roomId}
         setStreamId={setStreamId}
       />
     )
@@ -36,5 +42,4 @@ const App = () => {
 
   return <GameView roomId={roomId} streamId={streamId} clientId={myClientId} />
 }
-
 export default App
