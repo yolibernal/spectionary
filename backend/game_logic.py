@@ -7,6 +7,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Commit
+from specklepy.api.models import User as SpeckleUser
 from specklepy.api.resources.stream import Resource
 
 from connection_manager import ConnectionManager
@@ -41,7 +42,7 @@ class SpeckleGameManager:
         self.stream = self.client.stream.get(stream_id)
         return self.stream
 
-    def add_collaborators(self, collaborator_emails: List[str]):
+    def add_collaborators(self, collaborator_emails: List[str]) -> List[SpeckleUser]:
         if self.stream is None:
             raise Exception("Stream not initialized")
 
@@ -52,12 +53,19 @@ class SpeckleGameManager:
         if len(new_collaborators_email) == 0:
             return
 
+        speckle_users = []
         for email in new_collaborators_email:
-            user = self.client.user.search(email)[0]
+            user = self.get_user_for_email(email)
             self.client.stream.grant_permission(
                 self.stream.id, user.id, "stream:contributor"
             )
+            speckle_users += [user]
         self.collaborator_emails += collaborator_emails
+        return speckle_users
+
+    def get_user_for_email(self, speckle_email: str):
+        user = self.client.user.search(speckle_email)[0]
+        return user
 
     def get_latest_commit(self) -> Commit:
         commits = self.client.commit.list(self.stream.id)
@@ -98,8 +106,14 @@ class GameRoom:
         self.speckle_manager.initialize_stream()
 
     def add_client(self, name: str, client_id: str, speckle_email: str):
-        user = User(client_id=client_id, name=name, speckle_email=speckle_email)
-        self.speckle_manager.add_collaborators([speckle_email])
+        speckle_user = self.speckle_manager.add_collaborators([speckle_email])[0]
+
+        user = User(
+            client_id=client_id,
+            name=name,
+            speckle_id=speckle_user.id,
+            speckle_email=speckle_email,
+        )
         self.users[client_id] = user
 
     async def broadcast(self, message: str):
