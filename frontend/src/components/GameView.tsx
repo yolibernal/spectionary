@@ -14,7 +14,6 @@ import {
   MainContainer,
   StyledInput,
   StyledTitle,
-  SubmitButton,
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
@@ -130,15 +129,6 @@ export const GameView: FunctionComponent<{
               width="800"
               height="500"
             />
-            <SubmitButton
-              onClick={async () => {
-                const response = await axios.get(`/latest-commit/${roomId}`)
-                const { data } = response
-                setLatestCommitId(data.latest_commit_id)
-              }}
-            >
-              Check for commits
-            </SubmitButton>
           </ViewerBox>
 
           <ChatContainer>
