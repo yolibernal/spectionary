@@ -3,7 +3,20 @@ import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
 import { User } from "../User"
 import { MessageBubble } from "./MessageBubble"
-import { CopyRoom, GameBox, GameViewContainer, ViewerBox } from "./styles"
+import { Spectionary } from "./Spectionary"
+import {
+  Chat,
+  ChatButton,
+  ChatContainer,
+  CopyRoom,
+  GameBox,
+  GameViewContainer,
+  MainContainer,
+  StyledInput,
+  StyledTitle,
+  SubmitButton,
+  ViewerBox,
+} from "./styles"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -84,61 +97,63 @@ export const GameView: FunctionComponent<{
   }
 
   return (
-    <GameViewContainer>
-      <h1>Spectionary</h1>
-      <h2 onClick={copyToClipboard}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          Click to copy room:{" "}
-          <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
-        </div>
-      </h2>
-      <h2>Current turn: {currentUser?.name} </h2>
-      <GameBox>
-        <ViewerBox>
-          <iframe
-            src={`https://speckle.xyz/embed?stream=${streamId}&commit=${latestCommitId}`}
-            width="800"
-            height="500"
-          />
-          <button
-            className="submit"
-            onClick={async () => {
-              const response = await axios.get(`/latest-commit/${roomId}`)
-              const { data } = response
-              setLatestCommitId(data.latest_commit_id)
-            }}
-          >
-            Check for commits
-          </button>
-        </ViewerBox>
+    <MainContainer>
+      <Spectionary />
+      <GameViewContainer>
+        <StyledTitle onClick={copyToClipboard}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            Click to copy room:{" "}
+            <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
+          </div>
+        </StyledTitle>
+        <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+        <GameBox>
+          <ViewerBox>
+            <iframe
+              src={`https://speckle.xyz/embed?stream=${streamId}&commit=${latestCommitId}`}
+              width="800"
+              height="500"
+            />
+            <SubmitButton
+              onClick={async () => {
+                const response = await axios.get(`/latest-commit/${roomId}`)
+                const { data } = response
+                setLatestCommitId(data.latest_commit_id)
+              }}
+            >
+              Check for commits
+            </SubmitButton>
+          </ViewerBox>
 
-        <div className="chat-container">
-          <div className="chat">
-            {messages.map((message, index) => (
-              <MessageBubble
-                message={message}
-                myClientId={myClientId}
-                key={index}
+          <ChatContainer>
+            <Chat>
+              {messages.map((message, index) => (
+                <MessageBubble
+                  message={message}
+                  myClientId={myClientId}
+                  key={index}
+                />
+              ))}
+            </Chat>
+            <div className="input-chat-container">
+              <StyledInput
+                className="input-chat"
+                type="text"
+                placeholder="Chat message ..."
+                onChange={(e) => setMessage(e.target.value)}
+                value={message}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    sendTextMessage()
+                  }
+                }}
               />
-            ))}
-          </div>
-          <div className="input-chat-container">
-            <input
-              className="input-chat"
-              type="text"
-              placeholder="Chat message ..."
-              onChange={(e) => setMessage(e.target.value)}
-              value={message}
-            ></input>
-            <button className="submit-chat" onClick={sendTextMessage}>
-              Send
-            </button>
-            <button className="submit-chat" onClick={startNextRound}>
-              Next round
-            </button>
-          </div>
-        </div>
-      </GameBox>
-    </GameViewContainer>
+              <ChatButton onClick={sendTextMessage}>Send</ChatButton>
+              <ChatButton onClick={startNextRound}>Next round</ChatButton>
+            </div>
+          </ChatContainer>
+        </GameBox>
+      </GameViewContainer>
+    </MainContainer>
   )
 }

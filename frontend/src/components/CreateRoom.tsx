@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Dispatch, FunctionComponent, SetStateAction, useState } from "react"
+import { StyledInput, StyledTitle, SubmitButton } from "./styles"
 
 interface Props {
   setRoomId: Dispatch<SetStateAction<string>>
@@ -19,23 +20,22 @@ export const CreateRoom: FunctionComponent<Props> = ({
   const [streamName, setStreamName] = useState<string>("")
   return (
     <div>
-      <h2>Create Room</h2>
-      <input
+      <StyledTitle>Create Room</StyledTitle>
+      <StyledInput
         className="input-chat"
         type="text"
         placeholder="Stream name"
         onChange={(e) => setStreamName(e.target.value)}
-        value={streamName || ""}
+        value={streamName}
       />
-      <input
+      <StyledInput
         className="input-chat"
         type="text"
         placeholder="Speckle access token"
         onChange={(e) => setAccessToken(e.target.value)}
-        value={accessToken || ""}
+        value={accessToken}
       />
-      <button
-        className="submit"
+      <SubmitButton
         onClick={async () => {
           const response = await axios.post("/create-room", {
             client_id: clientId,
@@ -50,7 +50,7 @@ export const CreateRoom: FunctionComponent<Props> = ({
         }}
       >
         Create Game Room
-      </button>
+      </SubmitButton>
     </div>
   )
 }
