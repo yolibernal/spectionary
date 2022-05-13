@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
 import { MessageBubble } from "./MessageBubble"
 
-export const ChatView: FunctionComponent<{
+export const GameView: FunctionComponent<{
   roomId: string
   clientId: string
 }> = ({ roomId, clientId: myClientId }) => {

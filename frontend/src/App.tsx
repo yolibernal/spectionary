@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { v4 as uuidv4 } from "uuid"
 import "./App.css"
-import { ChatView } from "./components/ChatView"
+import { GameView } from "./components/GameView"
 import { JoinRoomView } from "./components/JoinRoomView"
 
 const App = () => {
@@ -13,7 +13,7 @@ const App = () => {
     return <JoinRoomView clientId={myClientId} setRoomId={setRoomId} />
   }
 
-  return <ChatView roomId={roomId} clientId={myClientId} />
+  return <GameView roomId={roomId} clientId={myClientId} />
 }
 
 export default App
