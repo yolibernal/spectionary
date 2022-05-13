@@ -135,7 +135,6 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
         message = {"time": current_time, "type": "disconnected", "message": "Offline"}
         await game_room.broadcast(json.dumps(message))
 
-from fastapi.staticfiles import StaticFiles
 
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path: str, scope):
