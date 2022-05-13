@@ -10,6 +10,7 @@ export type Message = {
     | "new_commit"
     | "new_round"
     | "solved"
+    | "timeout"
   message?: string
   time?: string
   user?: User

@@ -10,6 +10,7 @@ from specklepy.api.models import Commit
 from specklepy.api.resources.stream import Resource
 
 from connection_manager import ConnectionManager
+from timer import Timer
 from words import words
 
 
@@ -86,6 +87,7 @@ class GameRoom:
 
         self.current_user_index = None
         self.current_solution = None
+        self.current_timeout = None
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
@@ -115,6 +117,17 @@ class GameRoom:
             return None
         return list(self.users.values())[self.current_user_index]
 
+    async def timeout_round(self):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        message = {
+            "type": "timeout",
+            "time": current_time,
+            "user": self.get_current_user().dict(),
+        }
+        await self.broadcast(json.dumps(message))
+
     async def next_turn(self):
         now = datetime.now()
         current_time = now.strftime("%H:%M")
@@ -129,6 +142,10 @@ class GameRoom:
 
         self.current_solution = random.choice(words)
         print("CURRENT SOLUTION", self.current_solution)
+
+        if self.current_timeout is not None:
+            self.current_timeout.cancel()
+        self.current_timeout = Timer(60 * 5, self.timeout_round)
 
         message = {
             "type": "new_round",
@@ -145,6 +162,8 @@ class GameRoom:
             return
         if message.get("message", None) != self.current_solution:
             return
+
+        self.current_timeout.cancel()
         message = {
             "type": "solved",
             "time": current_time,

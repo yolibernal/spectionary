@@ -41,6 +41,9 @@ export const GameView: FunctionComponent<{
       if (message.type === "solved") {
         console.log("SOLVED by", message.user)
       }
+      if (message.type === "timeout") {
+        console.log("TIMEOUTED by", message.user)
+      }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
       }
