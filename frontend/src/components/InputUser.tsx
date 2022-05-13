@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Dispatch, FunctionComponent, SetStateAction } from "react"
+import { StyledInput, StyledTitle, SubmitButton } from "./styles"
 
 interface Props {
   speckleEmail: string
@@ -21,15 +22,15 @@ export const InputUser: FunctionComponent<Props> = ({
 }) => {
   return (
     <div>
-      <h2>User</h2>
-      <input
+      <StyledTitle>User</StyledTitle>
+      <StyledInput
         className="input-chat"
         type="text"
         placeholder="Name"
         onChange={(e) => setName(e.target.value)}
         value={name}
       />
-      <input
+      <StyledInput
         className="input-chat"
         type="text"
         placeholder="Speckle email"
@@ -37,8 +38,7 @@ export const InputUser: FunctionComponent<Props> = ({
         value={speckleEmail}
       />
       {roomId && (
-        <button
-          className="submit"
+        <SubmitButton
           onClick={async () => {
             const response = await axios.post("/join-room", {
               client_id: clientId,
@@ -51,7 +51,7 @@ export const InputUser: FunctionComponent<Props> = ({
           }}
         >
           Join Game Room
-        </button>
+        </SubmitButton>
       )}
     </div>
   )

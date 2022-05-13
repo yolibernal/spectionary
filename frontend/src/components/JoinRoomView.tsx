@@ -7,6 +7,8 @@ import React, {
 import { CreateRoom } from "./CreateRoom"
 import { InputUser } from "./InputUser"
 import { JoinRoom } from "./JoinRoom"
+import { Spectionary } from "./Spectionary"
+import { Divider, JoinRoomViewContainer, MainContainer, OrBox } from "./styles"
 
 export const JoinRoomView: FunctionComponent<{
   clientId: string
@@ -17,34 +19,38 @@ export const JoinRoomView: FunctionComponent<{
   const [speckleEmail, setSpeckleEmail] = useState<string>("")
   const [name, setName] = useState<string>("")
   return (
-    <div className="container">
-      <InputUser
-        speckleEmail={speckleEmail}
-        setSpeckleEmail={setSpeckleEmail}
-        roomId={roomId}
-        clientId={clientId}
-        setStreamId={setStreamId}
-        name={name}
-        setName={setName}
-      />
-      {!roomId && (
-        <CreateRoom
-          setRoomId={setRoomId}
+    <MainContainer>
+      <Spectionary />
+      <JoinRoomViewContainer>
+        <InputUser
+          speckleEmail={speckleEmail}
+          setSpeckleEmail={setSpeckleEmail}
+          roomId={roomId}
+          clientId={clientId}
           setStreamId={setStreamId}
-          speckleEmail={speckleEmail}
           name={name}
-          clientId={clientId}
+          setName={setName}
         />
-      )}
-
-      {!roomId && (
-        <JoinRoom
-          clientId={clientId}
-          speckleEmail={speckleEmail}
-          name={name}
-          setRoomId={setRoomId}
-        />
-      )}
-    </div>
+        <Divider />
+        {!roomId && (
+          <CreateRoom
+            setRoomId={setRoomId}
+            setStreamId={setStreamId}
+            speckleEmail={speckleEmail}
+            name={name}
+            clientId={clientId}
+          />
+        )}
+        <OrBox>or</OrBox>
+        {!roomId && (
+          <JoinRoom
+            clientId={clientId}
+            speckleEmail={speckleEmail}
+            name={name}
+            setRoomId={setRoomId}
+          />
+        )}
+      </JoinRoomViewContainer>
+    </MainContainer>
   )
 }

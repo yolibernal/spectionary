@@ -1,5 +1,6 @@
 import axios from "axios"
 import { Dispatch, FunctionComponent, SetStateAction, useState } from "react"
+import { StyledInput, StyledTitle, SubmitButton } from "./styles"
 
 interface Props {
   clientId: string
@@ -18,17 +19,16 @@ export const JoinRoom: FunctionComponent<Props> = ({
 
   return (
     <div>
-      <h2>Join an existing room</h2>
+      <StyledTitle>Join an existing room</StyledTitle>
       <div>
-        <input
+        <StyledInput
           className="input-chat"
           type="text"
           placeholder="Room ID"
           onChange={(e) => setJoinRoomId(e.target.value)}
           value={joinRoomId}
         />
-        <button
-          className="submit"
+        <SubmitButton
           onClick={async () => {
             const response = await axios.post("/join-room", {
               client_id: clientId,
@@ -41,7 +41,7 @@ export const JoinRoom: FunctionComponent<Props> = ({
           }}
         >
           Join Game Room
-        </button>
+        </SubmitButton>
       </div>
     </div>
   )
