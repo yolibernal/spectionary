@@ -19,16 +19,19 @@ class User(BaseModel):
     client_id: str
     name: str
     speckle_email: str
+    speckle_id: str
 
 
 class SpeckleGameManager:
     stream_name: str
+    access_token: str
     collaborator_emails: List[str]
     client: SpeckleClient
     stream: Resource
 
     def __init__(self, access_token, stream_name):
         self.stream_name = stream_name
+        self.access_token = access_token
 
         self.client = SpeckleClient()
         self.client.authenticate_with_token(access_token)
@@ -82,6 +85,7 @@ class GameRoom:
     client_ids: List[str]
     connection_manager: ConnectionManager
     speckle_manager: SpeckleGameManager
+    users: Dict[str, User]
 
     def __init__(
         self,
@@ -91,7 +95,7 @@ class GameRoom:
         connection_manager: ConnectionManager,
     ):
         self.room_id = room_id
-        self.users: Dict[str, User] = {}
+        self.users = {}
 
         self.current_user_index = None
         self.current_solution = None
@@ -99,11 +103,12 @@ class GameRoom:
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
-            access_token=access_token, stream_name=stream_name
+            access_token=access_token,
+            stream_name=stream_name,
         )
 
     def initialize(self):
-        self.speckle_manager.initialize_stream()
+        self.stream = self.speckle_manager.initialize_stream()
 
     def add_client(self, name: str, client_id: str, speckle_email: str):
         speckle_user = self.speckle_manager.add_collaborators([speckle_email])[0]
@@ -212,6 +217,12 @@ class GameRoomManager:
 
     def get_room(self, room_id: str) -> Optional[GameRoom]:
         return self.rooms.get(room_id, None)
+
+    def get_room_by_stream_id(self, stream_id: str) -> Optional[GameRoom]:
+        found = [
+            r for r in self.rooms.values() if r.speckle_manager.stream.id == stream_id
+        ]
+        return found[0] if found else None
 
     def delete_room(self, room_id: str) -> None:
         game_room = self.get_room(room_id)
