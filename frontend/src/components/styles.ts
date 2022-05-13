@@ -52,6 +52,7 @@ export const Divider = styled.div`
 export const StyledTitle = styled.div`
   font-size: 1.5rem;
   font-weight: 500;
+  display: flex;
 `
 
 export const OrBox = styled.div`
@@ -167,4 +168,10 @@ export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
   box-shadow: 5px 5px black;
   margin-top: 10px;
   margin-bottom: 10px;
+`
+
+export const TimerStyle = styled.div`
+  font-weight: 700;
+  color: #3c82f6;
+  margin: 0 0 0 8px;
 `

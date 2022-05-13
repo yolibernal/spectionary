@@ -17,6 +17,7 @@ import {
   SubmitButton,
   ViewerBox,
 } from "./styles"
+import { Timer } from "./Timer"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -32,8 +33,11 @@ export const GameView: FunctionComponent<{
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
+  const [resetTimer, setResetTimer] = useState<boolean>(false)
+  const [stopTimer, setStopTimer] = useState<boolean>(false)
+
   useEffect(() => {
-    const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
+    const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
     const ws = new WebSocket(url)
 
     ws.onopen = () => {
@@ -53,12 +57,16 @@ export const GameView: FunctionComponent<{
     const handleReceivedMessage = (message: Message) => {
       if (message.type === "solved") {
         console.log("SOLVED by", message.user)
+        setStopTimer(true)
       }
       if (message.type === "timeout") {
         console.log("TIMEOUTED by", message.user)
+        setResetTimer(true)
       }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
+        setResetTimer(true)
+        setStopTimer(false)
       }
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
@@ -102,11 +110,19 @@ export const GameView: FunctionComponent<{
       <GameViewContainer>
         <StyledTitle onClick={copyToClipboard}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            Click to copy room:{" "}
+            Click to copy room:
             <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
           </div>
         </StyledTitle>
         <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+        <StyledTitle>
+          Round Countdown:{" "}
+          <Timer
+            resetTimer={resetTimer}
+            setResetTimer={setResetTimer}
+            stopTimer={stopTimer}
+          />
+        </StyledTitle>
         <GameBox>
           <ViewerBox>
             <iframe
