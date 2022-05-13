@@ -109,7 +109,7 @@ export const GameView: FunctionComponent<{
       <GameViewContainer>
         <StyledTitle onClick={copyToClipboard}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            Click to copy room:
+            Click to copy room link:
             <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
           </div>
         </StyledTitle>
