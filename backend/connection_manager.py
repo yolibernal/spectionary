@@ -1,4 +1,5 @@
 from typing import Dict, List
+
 from fastapi import WebSocket
 
 
@@ -12,10 +13,10 @@ class ConnectionManager:
         await websocket.accept()
         self.active_connections[client_id] = websocket
 
-    def disconnect(self, client_id: str):
+    async def disconnect(self, client_id: str):
         websocket = self.active_connections.pop(client_id, None)
         if websocket is not None:
-            websocket.close()
+            await websocket.close()
 
     async def send_message_to_client(self, client_id: str, message: str):
         websocket = self.active_connections.get(client_id, None)

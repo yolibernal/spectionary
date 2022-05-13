@@ -5,7 +5,7 @@ export const MessageBubble: FunctionComponent<{
   myClientId: string
   message: Message
 }> = ({ message, myClientId }) => {
-  const { type, clientId } = message
+  const { type, clientId, name } = message
   if (type !== "message") {
     return null
   }
@@ -13,7 +13,7 @@ export const MessageBubble: FunctionComponent<{
   return (
     <div className={`${classPrefix}-message-container`}>
       <div className={`${classPrefix}-message`}>
-        <p className="client">client id : {clientId}</p>
+        <p className="client">{name}</p>
         <p className="message">{message.message}</p>
       </div>
     </div>

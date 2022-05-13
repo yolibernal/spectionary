@@ -1,11 +1,23 @@
-from specklepy.api.resources.stream import Resource
+import json
+import random
 import uuid
+from datetime import datetime
 from typing import Dict, List, Optional
 
+from pydantic import BaseModel
 from specklepy.api.client import SpeckleClient
 from specklepy.api.models import Commit
+from specklepy.api.resources.stream import Resource
 
 from connection_manager import ConnectionManager
+from timer import Timer
+from words import words
+
+
+class User(BaseModel):
+    client_id: str
+    name: str
+    speckle_email: str
 
 
 class SpeckleGameManager:
@@ -51,7 +63,7 @@ class SpeckleGameManager:
 
     def get_latest_commit(self) -> Commit:
         commits = self.client.commit.list(self.stream.id)
-        if not commits:
+        if len(commits) == 0:
             return None
         return commits[0]
 
@@ -64,6 +76,7 @@ class GameRoom:
     client_ids: List[str]
     connection_manager: ConnectionManager
     speckle_manager: SpeckleGameManager
+    users: Dict[str, User]
 
     def __init__(
         self,
@@ -73,7 +86,11 @@ class GameRoom:
         connection_manager: ConnectionManager,
     ):
         self.room_id = room_id
-        self.client_ids = []
+        self.users = {}
+
+        self.current_user_index = None
+        self.current_solution = None
+        self.current_timeout = None
 
         self.connection_manager = connection_manager
         self.speckle_manager = SpeckleGameManager(
@@ -84,17 +101,79 @@ class GameRoom:
     def initialize(self):
         self.stream = self.speckle_manager.initialize_stream()
 
-    def add_client(self, client_id: str, speckle_email: str):
+    def add_client(self, name: str, client_id: str, speckle_email: str):
+        user = User(client_id=client_id, name=name, speckle_email=speckle_email)
         self.speckle_manager.add_collaborators([speckle_email])
-        if client_id in self.client_ids:
-            return
-        self.client_ids.append(client_id)
+        self.users[client_id] = user
 
     async def broadcast(self, message: str):
-        await self.connection_manager.broadcast_to_clients(self.client_ids, message)
+        client_ids = self.users.keys()
+        await self.connection_manager.broadcast_to_clients(client_ids, message)
+
+    def get_user(self, client_id: str):
+        return self.users.get(client_id, None)
 
     def terminate(self):
         self.speckle_manager.delete_stream()
+
+    def get_current_user(self):
+        if self.current_user_index is None:
+            return None
+        return list(self.users.values())[self.current_user_index]
+
+    async def timeout_round(self):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        message = {
+            "type": "timeout",
+            "time": current_time,
+            "user": self.get_current_user().dict(),
+        }
+        await self.broadcast(json.dumps(message))
+
+    async def next_turn(self):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        if len(self.users) == 0:
+            raise Exception("No users in room")
+        if self.current_user_index is None:
+            self.current_user_index = 0
+        else:
+            self.current_user_index += 1
+            self.current_user_index %= len(self.users)
+
+        self.current_solution = random.choice(words)
+        print("CURRENT SOLUTION", self.current_solution)
+
+        if self.current_timeout is not None:
+            self.current_timeout.cancel()
+        self.current_timeout = Timer(60 * 5, self.timeout_round)
+
+        message = {
+            "type": "new_round",
+            "time": current_time,
+            "user": self.get_current_user().dict(),
+        }
+        await self.broadcast(json.dumps(message))
+
+    async def check_solution(self, client_id, message):
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+
+        if self.current_solution is None:
+            return
+        if message.get("message", None) != self.current_solution:
+            return
+
+        self.current_timeout.cancel()
+        message = {
+            "type": "solved",
+            "time": current_time,
+            "user": self.get_user(client_id).dict(),
+        }
+        await self.broadcast(json.dumps(message))
 
 
 class GameRoomManager:

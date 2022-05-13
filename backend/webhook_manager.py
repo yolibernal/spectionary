@@ -62,7 +62,6 @@ class SpeckleWebhookManager:
             "time": current_time,
             "type": "new_commit",
             "message": payload["event"]["data"]["id"],
-            "data": payload,
         }
         await room.broadcast(json.dumps(client_message))
 

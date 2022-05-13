@@ -1,90 +1,56 @@
-import axios from "axios"
 import React, {
   Dispatch,
   FunctionComponent,
   SetStateAction,
   useState,
 } from "react"
+import { CreateRoom } from "./CreateRoom"
+import { InputUser } from "./InputUser"
+import { JoinRoom } from "./JoinRoom"
+import { Spectionary } from "./Spectionary"
+import { Divider, JoinRoomViewContainer, MainContainer, OrBox } from "./styles"
 
 export const JoinRoomView: FunctionComponent<{
   clientId: string
-  setRoomId: Dispatch<SetStateAction<string | null>>
-  setStreamId: Dispatch<SetStateAction<string | null>>
-}> = ({ clientId, setRoomId, setStreamId }) => {
-  const [joinRoomId, setJoinRoomId] = useState<string | null>(null)
-  const [speckleEmail, setSpeckleEmail] = useState<string | null>(null)
-  const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [streamName, setStreamName] = useState<string | null>(null)
+  setRoomId: Dispatch<SetStateAction<string>>
+  setStreamId: Dispatch<SetStateAction<string>>
+  roomId: string
+}> = ({ clientId, setRoomId, setStreamId, roomId }) => {
+  const [speckleEmail, setSpeckleEmail] = useState<string>("")
+  const [name, setName] = useState<string>("")
   return (
-    <div className="container">
-      <div>
-        <h2>User</h2>
-        <input
-          className="input-chat"
-          type="text"
-          placeholder="Speckle email"
-          onChange={(e) => setSpeckleEmail(e.target.value)}
-          value={speckleEmail || ""}
-        ></input>
-        <h2>Create Room</h2>
-        <input
-          className="input-chat"
-          type="text"
-          placeholder="Stream name"
-          onChange={(e) => setStreamName(e.target.value)}
-          value={streamName || ""}
-        ></input>
-        <input
-          className="input-chat"
-          type="text"
-          placeholder="Speckle access token"
-          onChange={(e) => setAccessToken(e.target.value)}
-          value={accessToken || ""}
-        ></input>
-
-        <button
-          className="submit"
-          onClick={async () => {
-            const response = await axios.post("/create-room", {
-              client_id: clientId,
-              access_token: accessToken,
-              stream_name: streamName,
-              speckle_email: speckleEmail,
-            })
-            const { room_id, stream_id } = response.data
-            setRoomId(room_id)
-            setStreamId(stream_id)
-          }}
-        >
-          Create Game Room
-        </button>
-      </div>
-
-      <h2>Join an existing room</h2>
-      <div>
-        <input
-          className="input-chat"
-          type="text"
-          placeholder="Room ID"
-          onChange={(e) => setJoinRoomId(e.target.value)}
-          value={joinRoomId || ""}
-        ></input>
-        <button
-          className="submit"
-          onClick={async () => {
-            const response = await axios.post("/join-room", {
-              client_id: clientId,
-              room_id: joinRoomId,
-              speckle_email: speckleEmail,
-            })
-            const { room_id, stream_id } = response.data
-            setRoomId(room_id)
-            setStreamId(stream_id)
-          }}
-        >
-          Join Game Room
-        </button>
-      </div>
-    </div>
+    <MainContainer>
+      <Spectionary />
+      <JoinRoomViewContainer>
+        <InputUser
+          speckleEmail={speckleEmail}
+          setSpeckleEmail={setSpeckleEmail}
+          roomId={roomId}
+          clientId={clientId}
+          setStreamId={setStreamId}
+          name={name}
+          setName={setName}
+        />
+        <Divider />
+        {!roomId && (
+          <CreateRoom
+            setRoomId={setRoomId}
+            setStreamId={setStreamId}
+            speckleEmail={speckleEmail}
+            name={name}
+            clientId={clientId}
+          />
+        )}
+        <OrBox>or</OrBox>
+        {!roomId && (
+          <JoinRoom
+            clientId={clientId}
+            speckleEmail={speckleEmail}
+            name={name}
+            setRoomId={setRoomId}
+          />
+        )}
+      </JoinRoomViewContainer>
+    </MainContainer>
   )
 }

@@ -1,3 +1,58 @@
+#root {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #e2e2e2;
+  font-family: "Space Grotesk";
+}
+
+/*
+  Josh's Custom CSS Reset
+  https://www.joshwcomeau.com/css/custom-css-reset/
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+#root,
+#__next {
+  isolation: isolate;
+}
 .App {
   text-align: center;
 }
@@ -45,32 +100,6 @@
   justify-content: center;
 }
 
-.chat-container {
-  box-shadow: 10px 10px;
-  max-width: 500px;
-  max-height: 500px;
-  border: 1px solid;
-}
-
-.chat {
-  padding: 10px;
-  width: 400px;
-  height: 400px;
-  background-color: rgb(77, 168, 253, 0.6);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
-}
-
-.chat::-webkit-scrollbar {
-  display: none;
-  /* Chrome */
-}
-
 .input-chat-container {
   padding: 10px;
   height: auto;
@@ -87,23 +116,15 @@
   border: 1px solid black;
 }
 
-.submit-chat {
-  max-width: 50px;
-  background-color: rgb(0, 55, 128);
-  outline: none;
-  border: 1px solid rgb(0, 55, 128);
-  cursor: pointer;
-  margin-left: 5px;
-  color: white;
-}
-
 .submit {
   background-color: rgb(0, 55, 128);
   outline: none;
   border: 1px solid rgb(0, 55, 128);
+  height: 48px;
   cursor: pointer;
-  margin-left: 5px;
   color: white;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .submit-chat:hover {
