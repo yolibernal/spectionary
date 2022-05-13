@@ -1,7 +1,8 @@
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import "./App.css"
+import { MessageBubble } from "./MessageBubble"
 
-type Message = {
+export type Message = {
   clientId: number
   type: "message" | "connected" | "disconnected"
   message?: string
@@ -16,7 +17,7 @@ const App = () => {
   const [websckt, setWebsckt] = useState<WebSocket>()
 
   const [message, setMessage] = useState<string>("")
-  const [chatHistory, setChatHistory] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
 
   useEffect(() => {
     const url = "ws://localhost:8000/ws/" + myClientId
@@ -37,7 +38,7 @@ const App = () => {
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
-      setChatHistory([...chatHistory, message])
+      setMessages([...messages, message])
     }
 
     if (!websckt) return
@@ -46,41 +47,20 @@ const App = () => {
       const message = JSON.parse(e.data)
       handleReceivedMessage(message)
     }
-  }, [websckt, chatHistory])
+  }, [websckt, messages])
 
   const sendTextMessage = () => {
-    if (websckt && message) {
-      const outMessage: Message = {
-        clientId: myClientId,
-        type: "message",
-        message: message,
-      }
-      websckt.send(JSON.stringify(outMessage))
-      setMessage("")
+    if (!websckt || !message) {
+      return
     }
-  }
 
-  const handleReceivedMessage = (message: Message) => {
-    console.log(myClientId)
-    setChatHistory([...chatHistory, message])
-  }
-
-  const renderedMessage = (
-    { clientId, type, message }: Message,
-    index: number
-  ): ReactNode => {
-    if (type === "message") {
-      const classPrefix = clientId === myClientId ? "my" : "another"
-      return (
-        <div key={index} className={`${classPrefix}-message-container`}>
-          <div className={`${classPrefix}-message`}>
-            <p className="client">client id : {clientId}</p>
-            <p className="message">{message}</p>
-          </div>
-        </div>
-      )
+    const outMessage: Message = {
+      clientId: myClientId,
+      type: "message",
+      message: message,
     }
-    return <></>
+    websckt.send(JSON.stringify(outMessage))
+    setMessage("")
   }
 
   return (
@@ -88,7 +68,15 @@ const App = () => {
       <h1>Chat</h1>
       <h2>Your client id: {myClientId} </h2>
       <div className="chat-container">
-        <div className="chat">{chatHistory.map(renderedMessage)}</div>
+        <div className="chat">
+          {messages.map((message, index) => (
+            <MessageBubble
+              message={message}
+              myClientId={myClientId}
+              key={index}
+            />
+          ))}
+        </div>
         <div className="input-chat-container">
           <input
             className="input-chat"
