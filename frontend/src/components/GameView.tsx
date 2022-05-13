@@ -62,11 +62,18 @@ export const GameView: FunctionComponent<{
     setMessage("")
   }
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.origin + "/" + roomId)
+  }
   return (
     <div className="container">
       <h1>Chat</h1>
       <h2>Your client id: {myClientId} </h2>
-      <h2>Your room id: {roomId} </h2>
+      <h2 onClick={copyToClipboard}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          Click to copy room: <a href="#">{window.origin + "/" + roomId}</a>
+        </div>{" "}
+      </h2>
       <div className="chat-container">
         <div className="chat">
           {messages.map((message, index) => (
