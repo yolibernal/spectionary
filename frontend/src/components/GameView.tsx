@@ -33,7 +33,7 @@ export const GameView: FunctionComponent<{
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const url = `ws://localhost:8000/ws/${roomId}/${myClientId}`
+    const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
     const ws = new WebSocket(url)
 
     ws.onopen = () => {
