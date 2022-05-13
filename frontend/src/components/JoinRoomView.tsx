@@ -31,24 +31,27 @@ export const JoinRoomView: FunctionComponent<{
           name={name}
           setName={setName}
         />
-        <Divider />
         {!roomId && (
-          <CreateRoom
-            setRoomId={setRoomId}
-            setStreamId={setStreamId}
-            speckleEmail={speckleEmail}
-            name={name}
-            clientId={clientId}
-          />
-        )}
-        <OrBox>or</OrBox>
-        {!roomId && (
-          <JoinRoom
-            clientId={clientId}
-            speckleEmail={speckleEmail}
-            name={name}
-            setRoomId={setRoomId}
-          />
+          <>
+            <Divider />
+
+            <CreateRoom
+              setRoomId={setRoomId}
+              setStreamId={setStreamId}
+              speckleEmail={speckleEmail}
+              name={name}
+              clientId={clientId}
+            />
+
+            <OrBox>or</OrBox>
+
+            <JoinRoom
+              clientId={clientId}
+              speckleEmail={speckleEmail}
+              name={name}
+              setRoomId={setRoomId}
+            />
+          </>
         )}
       </JoinRoomViewContainer>
     </MainContainer>
