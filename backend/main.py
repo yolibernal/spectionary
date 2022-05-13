@@ -23,6 +23,10 @@ class CreateRoomModel(BaseModel):
     client_id: str
 
 
+class JoinRoomModel(CreateRoomModel):
+    room_id: str
+
+
 class GameRoom:
     def __init__(self, room_id: str):
         self.room_id = room_id
@@ -93,6 +97,17 @@ connection_manager = ConnectionManager()
 @app.post("/create-room")
 async def create_room(data: CreateRoomModel):
     game_room = game_room_manager.create_room()
+
+    return {"room_id": game_room.room_id}
+
+
+@app.post("/join-room")
+async def join_room(data: JoinRoomModel):
+    room_id = data.room_id
+    game_room = game_room_manager.get_room(room_id)
+
+    if game_room is None:
+        return {"room_id": None, "error": "Room does not exist"}
 
     return {"room_id": game_room.room_id}
 
