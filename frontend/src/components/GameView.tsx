@@ -18,6 +18,7 @@ import {
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
+import { Waves } from "./Waves"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -170,6 +171,7 @@ export const GameView: FunctionComponent<{
           </ChatContainer>
         </GameBox>
       </GameViewContainer>
+      <Waves />
     </MainContainer>
   )
 }

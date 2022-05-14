@@ -6,7 +6,7 @@ export const MainContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding: 16px 0 0 0;
 `
 
 export const SpectionaryLogo = styled.div`
@@ -14,6 +14,7 @@ export const SpectionaryLogo = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 auto;
+  padding: 8px 0 16px 0;
   display: flex;
   &:first-child {
     margin: 0 16px 0 0;
@@ -24,6 +25,7 @@ export const JoinRoomViewContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto auto;
+  padding: 0 0 16px 0;
   & > * {
     margin: 24px 0 24px 0;
   }
@@ -72,6 +74,7 @@ export const GameViewContainer = styled.div`
   flex-direction: column;
   height: 100%;
   margin: 0 auto;
+  padding: 0 0 16px 0;
 `
 
 export const ChatContainer = styled.div`
@@ -116,9 +119,9 @@ export const ViewerBox = styled.div`
 `
 
 export const ChatButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: none;
   cursor: pointer;
   color: white;
   &:hover {
@@ -127,9 +130,10 @@ export const ChatButton = styled.button`
 `
 
 export const SubmitButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
+
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: none;
   height: 48px;
   cursor: pointer;
   color: white;

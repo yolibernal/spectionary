@@ -9,6 +9,7 @@ import { InputUser } from "./InputUser"
 import { JoinRoom } from "./JoinRoom"
 import { Spectionary } from "./Spectionary"
 import { Divider, JoinRoomViewContainer, MainContainer, OrBox } from "./styles"
+import { Waves } from "./Waves"
 
 export const JoinRoomView: FunctionComponent<{
   clientId: string
@@ -54,6 +55,7 @@ export const JoinRoomView: FunctionComponent<{
           </>
         )}
       </JoinRoomViewContainer>
+      <Waves />
     </MainContainer>
   )
 }
