@@ -127,6 +127,11 @@ class GameRoom:
         )
         self.users[client_id] = user
 
+    def clear_commits(self):
+        commits = self.client.commit.list(self.stream.id, limit=50)
+        for commit in commits:
+            self.client.commit.delete(self.stream.id, commit.id)
+
     async def broadcast(self, message: str):
         client_ids = self.users.keys()
         await self.connection_manager.broadcast_to_clients(client_ids, message)
@@ -156,6 +161,8 @@ class GameRoom:
     async def next_turn(self):
         now = datetime.now()
         current_time = now.strftime("%H:%M")
+
+        self.clear_commits()
 
         if len(self.users) == 0:
             raise Exception("No users in room")
