@@ -158,22 +158,26 @@ export const GameView: FunctionComponent<{
               <div style={{ margin: "0 8px 0 0" }}>Copy Room Link</div>
               <ContentPasteIcon />
             </SubmitButton>
-            <StyledTitle>
-              Current word:{" "}
-              {currentUser?.client_id === myClientId
-                ? currentWord
-                : Array.from({ length: currentWord?.length || 0 }, (x, i) => i)
-                    .map((i) => "_")
-                    .join("")}
-            </StyledTitle>
-            <StyledTitle>
-              Round Countdown:
-              <Timer
-                resetTimer={resetTimer}
-                setResetTimer={setResetTimer}
-                stopTimer={stopTimer}
-              />
-            </StyledTitle>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <StyledTitle>
+                Round Countdown:
+                <Timer
+                  resetTimer={resetTimer}
+                  setResetTimer={setResetTimer}
+                  stopTimer={stopTimer}
+                />
+              </StyledTitle>
+              <StyledTitle>
+                {currentUser?.client_id === myClientId
+                  ? currentWord
+                  : Array.from(
+                      { length: currentWord?.length || 0 },
+                      (x, i) => i
+                    )
+                      .map((i) => "_")
+                      .join("")}
+              </StyledTitle>
+            </div>
           </RoomInfo>
           <UserList>{renderUsers}</UserList>
         </TitleRow>
