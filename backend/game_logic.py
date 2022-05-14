@@ -20,6 +20,7 @@ class User(BaseModel):
     name: str
     speckle_email: str
     speckle_id: str
+    points: int
 
 
 class SpeckleGameManager:
@@ -118,6 +119,7 @@ class GameRoom:
             name=name,
             speckle_id=speckle_user.id,
             speckle_email=speckle_email,
+            points=0,
         )
         self.users[client_id] = user
 
@@ -174,6 +176,10 @@ class GameRoom:
         await self.broadcast(json.dumps(message))
 
     async def check_solution(self, client_id, message):
+        user = self.get_user(client_id)
+        if not user:
+            return
+
         now = datetime.now()
         current_time = now.strftime("%H:%M")
 
@@ -181,6 +187,8 @@ class GameRoom:
             return
         if message.get("message", None) != self.current_solution:
             return
+
+        user.points = user.points + 1
 
         self.current_timeout.cancel()
         message = {

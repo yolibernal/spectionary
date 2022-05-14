@@ -1,3 +1,4 @@
+import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
 import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
@@ -13,8 +14,12 @@ import {
   GameBox,
   GameViewContainer,
   MainContainer,
+  RoomInfo,
   StyledInput,
   StyledTitle,
+  TitleRow,
+  UserEntry,
+  UserList,
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
@@ -27,6 +32,9 @@ export const GameView: FunctionComponent<{
 }> = ({ roomId, clientId: myClientId, streamId }) => {
   const [websocket, setWebsocket] = useState<WebSocket>()
 
+  const [resetTimer, setResetTimer] = useState<boolean>(false)
+  const [stopTimer, setStopTimer] = useState<boolean>(false)
+
   const [message, setMessage] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
 
@@ -34,8 +42,16 @@ export const GameView: FunctionComponent<{
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
 
-  const [resetTimer, setResetTimer] = useState<boolean>(false)
-  const [stopTimer, setStopTimer] = useState<boolean>(false)
+  const [allUsers, setAllUsers] = useState<User[]>([])
+
+  const fetchUsers = async () => {
+    const response = await axios.get(`/room/${roomId}/users`)
+    setAllUsers(Object.values(response.data.users))
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [messages, roomId])
 
   useEffect(() => {
     const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
@@ -105,25 +121,41 @@ export const GameView: FunctionComponent<{
     navigator.clipboard.writeText(window.origin + "/" + roomId)
   }
 
+  const renderUsers = allUsers
+    .sort((a, b) => (a.points > b.points ? 1 : -1))
+    .map((user) => (
+      <UserEntry key={`user-${user.name}`}>
+        {user.name}
+        {[...Array(user.points)].map((i) => (
+          <StarTwoToneIcon key={`star-${user.name}-${i}`} />
+        ))}
+      </UserEntry>
+    ))
+
   return (
     <MainContainer>
       <Spectionary />
       <GameViewContainer>
-        <StyledTitle onClick={copyToClipboard}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            Click to copy room link:
-            <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
-          </div>
-        </StyledTitle>
-        <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
-        <StyledTitle>
-          Round Countdown:{" "}
-          <Timer
-            resetTimer={resetTimer}
-            setResetTimer={setResetTimer}
-            stopTimer={stopTimer}
-          />
-        </StyledTitle>
+        <TitleRow>
+          <RoomInfo>
+            <StyledTitle onClick={copyToClipboard}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                Click to copy room link:
+                <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
+              </div>
+            </StyledTitle>
+            <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+            <StyledTitle>
+              Round Countdown:{" "}
+              <Timer
+                resetTimer={resetTimer}
+                setResetTimer={setResetTimer}
+                stopTimer={stopTimer}
+              />
+            </StyledTitle>
+          </RoomInfo>
+          <UserList>{renderUsers}</UserList>
+        </TitleRow>
         <GameBox>
           <ViewerBox>
             <iframe

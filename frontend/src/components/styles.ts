@@ -54,6 +54,45 @@ export const Divider = styled.div`
   background-color: #171821;
 `
 
+export const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+`
+
+export const RoomInfo = styled.div`
+  width: 800px;
+`
+
+export const UserList = styled.div`
+  box-shadow: 10px 10px;
+  width: 400px;
+  max-height: 128px;
+  border: 1px solid;
+  background-color: rgb(77, 168, 253, 0.6);
+  padding: 8px;
+  margin: 2px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+`
+
+export const UserEntry = styled.div`
+  height: 32px;
+  line-height: 32px;
+  margin: 4px;
+  padding: 0px 4px;
+  border: 1px solid;
+  background-color: rgb(77, 253, 200, 0.6);
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+`
+
 export const StyledTitle = styled.div`
   font-size: 1.5rem;
   font-weight: 500;
