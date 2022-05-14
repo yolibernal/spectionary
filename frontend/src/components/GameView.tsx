@@ -100,7 +100,7 @@ export const GameView: FunctionComponent<{
   }
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.origin + "/" + roomId)
+    navigator.clipboard.writeText(window.origin + "?roomId=" + roomId)
   }
 
   return (
@@ -110,7 +110,7 @@ export const GameView: FunctionComponent<{
         <StyledTitle onClick={copyToClipboard}>
           <div style={{ display: "flex", flexDirection: "column" }}>
             Click to copy room link:
-            <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
+            <CopyRoom>{window.origin + "?roomId=" + roomId}</CopyRoom>
           </div>
         </StyledTitle>
         <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
