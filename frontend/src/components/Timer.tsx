@@ -1,8 +1,22 @@
-import React, { FunctionComponent, useCallback, useEffect } from "react"
+import React, {
+  Dispatch,
+  FunctionComponent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+} from "react"
 import useCountDown from "../hooks/useCountdown"
 import { TimerStyle } from "./styles"
-
-export const Timer: FunctionComponent = () => {
+interface Props {
+  setResetTimer: Dispatch<SetStateAction<boolean>>
+  resetTimer: boolean
+  stopTimer: boolean
+}
+export const Timer: FunctionComponent<Props> = ({
+  resetTimer,
+  setResetTimer,
+  stopTimer,
+}) => {
   const initialTime = 5 * 60 * 1000 // initial time in milliseconds, defaults to 60000
   const interval = 1000 // interval to change remaining time amount, defaults to 1000
 
@@ -12,14 +26,24 @@ export const Timer: FunctionComponent = () => {
     interval
   )
 
-  // start the timer during the first render
   useEffect(() => {
-    start()
-  }, [])
+    if (resetTimer) {
+      start(initialTime)
+      setResetTimer(false)
+    }
+  }, [resetTimer])
 
-  const milisToMinutesAndSeconds = (milis: number) => {
-    const minutes = Math.floor(milis / 60000)
-    const seconds = Math.floor((milis % 60000) / 1000)
+  useEffect(() => {
+    if (stopTimer) {
+      pause()
+    } else {
+      resume()
+    }
+  }, [stopTimer])
+
+  const millisToMinutesAndSeconds = (millis: number) => {
+    const minutes = Math.floor(millis / 60000)
+    const seconds = Math.floor((millis % 60000) / 1000)
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`
   }
 
@@ -30,7 +54,7 @@ export const Timer: FunctionComponent = () => {
   return (
     <TimerStyle>
       {/*@ts-ignore*/}
-      {milisToMinutesAndSeconds(timeLeft)}
+      {millisToMinutesAndSeconds(timeLeft)}
     </TimerStyle>
   )
 }

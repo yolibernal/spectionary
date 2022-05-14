@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Message } from "../Message"
 
 export const MainContainer = styled.div`
   display: flex;
@@ -6,6 +7,7 @@ export const MainContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
+  padding: 16px 0 0 0;
 `
 
 export const SpectionaryLogo = styled.div`
@@ -13,6 +15,7 @@ export const SpectionaryLogo = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 auto;
+  padding: 8px 0 16px 0;
   display: flex;
   &:first-child {
     margin: 0 16px 0 0;
@@ -23,14 +26,15 @@ export const JoinRoomViewContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto auto;
+  padding: 0 0 16px 0;
   & > * {
-    margin: 24px 0 24px 0;
+    margin: 12px 0 12px 0;
   }
   & > *:first-child {
-    margin: 0 0 24px 0;
+    margin: 0 0 12px 0;
   }
   & > *:last-child {
-    margin: 24px 0 0 0;
+    margin: 12px 0 0 0;
   }
 `
 
@@ -39,6 +43,9 @@ export const StyledInput = styled.input`
   color: #171821;
   font-size: 16px;
   padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
 `
 
 export const Divider = styled.div`
@@ -110,6 +117,7 @@ export const GameViewContainer = styled.div`
   flex-direction: column;
   height: 100%;
   margin: 0 auto;
+  padding: 0 0 16px 0;
 `
 
 export const ChatContainer = styled.div`
@@ -142,6 +150,8 @@ export const Chat = styled.div`
 export const GameBox = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 `
 
 export const ViewerBox = styled.div`
@@ -152,28 +162,62 @@ export const ViewerBox = styled.div`
 `
 
 export const ChatButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: 1px solid black;
   cursor: pointer;
   color: white;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
 `
 
 export const SubmitButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: 1px solid black;
   height: 48px;
   cursor: pointer;
   color: white;
   font-size: 16px;
   font-weight: bold;
+  padding: 0px 16px;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
+`
+
+export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ type }) => {
+    if (type === "new_round") {
+      return "rgb(0, 55, 128)"
+    }
+    if (type === "new_commit") {
+      return "#3c82f6"
+    }
+    if (type === "solved") {
+      return "rgb(77, 253, 215)"
+    }
+    if (type === "timeout") {
+      return "rgb(178,34,34)"
+    }
+    return "rgb(0, 55, 128)"
+  }};
+  color: ${({ type }) => {
+    if (type === "solved") {
+      return "black"
+    }
+    return "white"
+  }};
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `
 
 export const TimerStyle = styled.div`

@@ -1,3 +1,4 @@
+import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
 import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
 import { Message } from "../Message"
@@ -15,14 +16,13 @@ import {
   RoomInfo,
   StyledInput,
   StyledTitle,
-  SubmitButton,
   TitleRow,
   UserEntry,
   UserList,
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
-import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
+import { Waves } from "./Waves"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -30,6 +30,9 @@ export const GameView: FunctionComponent<{
   streamId: string
 }> = ({ roomId, clientId: myClientId, streamId }) => {
   const [websocket, setWebsocket] = useState<WebSocket>()
+
+  const [resetTimer, setResetTimer] = useState<boolean>(false)
+  const [stopTimer, setStopTimer] = useState<boolean>(false)
 
   const [message, setMessage] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
@@ -70,17 +73,21 @@ export const GameView: FunctionComponent<{
     const handleReceivedMessage = (message: Message) => {
       if (message.type === "solved") {
         console.log("SOLVED by", message.user)
+        setStopTimer(true)
       }
       if (message.type === "timeout") {
         console.log("TIMEOUTED by", message.user)
+        setResetTimer(true)
       }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
+        setResetTimer(true)
+        setStopTimer(false)
       }
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
       }
-      setMessages([...messages, message])
+      setMessages((messages) => [...messages, message])
     }
 
     if (!websocket) return
@@ -89,7 +96,7 @@ export const GameView: FunctionComponent<{
       const message = JSON.parse(e.data)
       handleReceivedMessage(message)
     }
-  }, [websocket, messages])
+  }, [websocket, messages, setMessages])
 
   const sendTextMessage = () => {
     if (!websocket || !message) {
@@ -132,13 +139,18 @@ export const GameView: FunctionComponent<{
           <RoomInfo>
             <StyledTitle onClick={copyToClipboard}>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                Click to copy room:{" "}
+                Click to copy room link:
                 <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
               </div>
             </StyledTitle>
             <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
             <StyledTitle>
-              Round Countdown: <Timer />
+              Round Countdown:{" "}
+              <Timer
+                resetTimer={resetTimer}
+                setResetTimer={setResetTimer}
+                stopTimer={stopTimer}
+              />
             </StyledTitle>
           </RoomInfo>
           <UserList>{renderUsers}</UserList>
@@ -150,15 +162,6 @@ export const GameView: FunctionComponent<{
               width="800"
               height="500"
             />
-            <SubmitButton
-              onClick={async () => {
-                const response = await axios.get(`/latest-commit/${roomId}`)
-                const { data } = response
-                setLatestCommitId(data.latest_commit_id)
-              }}
-            >
-              Check for commits
-            </SubmitButton>
           </ViewerBox>
 
           <ChatContainer>
@@ -190,6 +193,7 @@ export const GameView: FunctionComponent<{
           </ChatContainer>
         </GameBox>
       </GameViewContainer>
+      <Waves />
     </MainContainer>
   )
 }
