@@ -1,3 +1,4 @@
+import queryString from "query-string"
 import React, { useEffect, useState } from "react"
 import { v4 as uuidv4, validate } from "uuid"
 import "./App.css"
@@ -25,8 +26,11 @@ const App = () => {
   const [streamId, setStreamId] = useState<string>("")
 
   useEffect(() => {
-    const urlUUID = window.location.pathname.split("/")[1]
-    if (validate(urlUUID)) setRoomId(urlUUID)
+    const { query } = queryString.parseUrl(window.location.search)
+    const { roomId } = query
+    if (roomId && typeof roomId === "string" && validate(roomId)) {
+      setRoomId(roomId)
+    }
   }, [])
 
   if (!roomId || !streamId) {

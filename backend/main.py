@@ -144,11 +144,15 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, client_id: str)
         await game_room.broadcast(json.dumps(message))
 
 
-class SPAStaticFiles(StaticFiles):
-    async def get_response(self, path: str, scope):
-        response = await super().get_response(path, scope)
-        if response.status_code == 404:
-            response = await super().get_response('.', scope)
-        return response
+if os.environ["ENV"] == "production":
 
-app.mount('/', SPAStaticFiles(directory='../frontend/build', html=True), name='react')
+    class SPAStaticFiles(StaticFiles):
+        async def get_response(self, path: str, scope):
+            response = await super().get_response(path, scope)
+            if response.status_code == 404:
+                response = await super().get_response(".", scope)
+            return response
+
+    app.mount(
+        "/", SPAStaticFiles(directory="../frontend/build", html=True), name="react"
+    )

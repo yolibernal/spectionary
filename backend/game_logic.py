@@ -171,6 +171,7 @@ class GameRoom:
         message = {
             "type": "new_round",
             "time": current_time,
+            "word": self.current_solution,
             "user": self.get_current_user().dict(),
         }
         await self.broadcast(json.dumps(message))

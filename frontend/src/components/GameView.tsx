@@ -42,6 +42,7 @@ export const GameView: FunctionComponent<{
   const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [currentWord, setCurrentWord] = useState<string | null>(null)
 
   const [allUsers, setAllUsers] = useState<User[]>([])
 
@@ -83,6 +84,7 @@ export const GameView: FunctionComponent<{
       }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
+        setCurrentWord(message.word || null)
         setResetTimer(true)
         setStopTimer(false)
       }
@@ -119,7 +121,7 @@ export const GameView: FunctionComponent<{
   }
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.origin + "/" + roomId)
+    navigator.clipboard.writeText(window.origin + "?roomId=" + roomId)
   }
 
   const renderUsers = allUsers
@@ -149,6 +151,12 @@ export const GameView: FunctionComponent<{
               <div style={{ margin: "0 8px 0 0" }}>Copy Room Link</div>
               <ContentPasteIcon />
             </SubmitButton>
+            <StyledTitle>
+              Current word:{" "}
+              {currentUser?.client_id === myClientId
+                ? currentWord
+                : "<REDACTED>"}
+            </StyledTitle>
             <StyledTitle>
               Round Countdown:
               <Timer
