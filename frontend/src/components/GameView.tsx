@@ -155,7 +155,9 @@ export const GameView: FunctionComponent<{
               Current word:{" "}
               {currentUser?.client_id === myClientId
                 ? currentWord
-                : "<REDACTED>"}
+                : Array.from({ length: currentWord?.length || 0 }, (x, i) => i)
+                    .map((i) => "_")
+                    .join("")}
             </StyledTitle>
             <StyledTitle>
               Round Countdown:
