@@ -8,6 +8,7 @@ export const MainContainer = styled.div`
   width: 100%;
   height: 100%;
   padding: 16px 0 0 0;
+  overflow-y: scroll;
 `
 
 export const SpectionaryLogo = styled.div`
@@ -57,7 +58,7 @@ export const Divider = styled.div`
 export const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
 `
 
@@ -77,15 +78,21 @@ export const UserList = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
+  margin: 0 0 16px 0;
 `
 
-export const UserEntry = styled.div`
+interface UserProps {
+  isSelected: boolean
+}
+
+export const UserEntry = styled.div<UserProps>`
   height: 32px;
   line-height: 32px;
   margin: 4px;
   padding: 0px 4px;
   border: 1px solid;
-  background-color: rgb(77, 253, 200, 0.6);
+  background-color: ${({ isSelected }) =>
+    isSelected ? "pink" : "rgb(77, 253, 200, 0.6)"};
   text-align: center;
   display: flex;
   flex-direction: row;
@@ -124,7 +131,7 @@ export const ChatContainer = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 10px 10px;
-  max-width: 500px;
+  width: 400px;
   max-height: 500px;
   border: 1px solid;
 `
@@ -199,6 +206,8 @@ export const SubmitButton = styled.button`
     background-color: rgb(16, 108, 230);
   }
   box-shadow: 5px 5px black;
+  display: flex;
+  align-items: center;
 `
 
 export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`

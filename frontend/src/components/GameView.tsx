@@ -1,3 +1,4 @@
+import ContentPasteIcon from "@mui/icons-material/ContentPaste"
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
 import axios from "axios"
 import React, { FunctionComponent, useEffect, useState } from "react"
@@ -10,13 +11,13 @@ import {
   ChatButton,
   ChatButtonGroup,
   ChatContainer,
-  CopyRoom,
   GameBox,
   GameViewContainer,
   MainContainer,
   RoomInfo,
   StyledInput,
   StyledTitle,
+  SubmitButton,
   TitleRow,
   UserEntry,
   UserList,
@@ -124,7 +125,10 @@ export const GameView: FunctionComponent<{
   const renderUsers = allUsers
     .sort((a, b) => (a.points > b.points ? 1 : -1))
     .map((user) => (
-      <UserEntry key={`user-${user.name}`}>
+      <UserEntry
+        key={`user-${user.name}`}
+        isSelected={currentUser?.name === user.name}
+      >
         {user.name}
         {[...Array(user.points)].map((i) => (
           <StarTwoToneIcon key={`star-${user.name}-${i}`} />
@@ -138,15 +142,15 @@ export const GameView: FunctionComponent<{
       <GameViewContainer>
         <TitleRow>
           <RoomInfo>
-            <StyledTitle onClick={copyToClipboard}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                Click to copy room link:
-                <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
-              </div>
-            </StyledTitle>
-            <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+            <SubmitButton
+              onClick={copyToClipboard}
+              style={{ margin: "0 0 16px 0" }}
+            >
+              <div style={{ margin: "0 8px 0 0" }}>Copy Room Link</div>
+              <ContentPasteIcon />
+            </SubmitButton>
             <StyledTitle>
-              Round Countdown:{" "}
+              Round Countdown:
               <Timer
                 resetTimer={resetTimer}
                 setResetTimer={setResetTimer}

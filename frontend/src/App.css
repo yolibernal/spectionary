@@ -11,6 +11,11 @@
   font-family: "Space Grotesk";
 }
 
+body,
+html {
+  height: 100%;
+}
+
 /*
   Josh's Custom CSS Reset
   https://www.joshwcomeau.com/css/custom-css-reset/
