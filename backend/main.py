@@ -83,6 +83,14 @@ async def join_room(data: JoinRoomModel):
     }
 
 
+@app.get("/room/{room_id}/users")
+async def room_users(room_id: str):
+    game_room = game_room_manager.get_room(room_id)
+    if game_room is None:
+        return {"error": "Room does not exist"}
+    return {"users": game_room.users}
+
+
 @app.post("/next-round/{room_id}")
 async def next_round(room_id: str):
     game_room = game_room_manager.get_room(room_id)

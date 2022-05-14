@@ -7,7 +7,7 @@ export const MainContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding: 16px 0 0 0;
 `
 
 export const SpectionaryLogo = styled.div`
@@ -15,6 +15,7 @@ export const SpectionaryLogo = styled.div`
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0 auto;
+  padding: 8px 0 16px 0;
   display: flex;
   &:first-child {
     margin: 0 16px 0 0;
@@ -25,6 +26,7 @@ export const JoinRoomViewContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto auto;
+  padding: 0 0 16px 0;
   & > * {
     margin: 12px 0 12px 0;
   }
@@ -52,6 +54,45 @@ export const Divider = styled.div`
   background-color: #171821;
 `
 
+export const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+`
+
+export const RoomInfo = styled.div`
+  width: 800px;
+`
+
+export const UserList = styled.div`
+  box-shadow: 10px 10px;
+  width: 400px;
+  max-height: 128px;
+  border: 1px solid;
+  background-color: rgb(77, 168, 253, 0.6);
+  padding: 8px;
+  margin: 2px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+`
+
+export const UserEntry = styled.div`
+  height: 32px;
+  line-height: 32px;
+  margin: 4px;
+  padding: 0px 4px;
+  border: 1px solid;
+  background-color: rgb(77, 253, 200, 0.6);
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+`
+
 export const StyledTitle = styled.div`
   font-size: 1.5rem;
   font-weight: 500;
@@ -76,6 +117,7 @@ export const GameViewContainer = styled.div`
   flex-direction: column;
   height: 100%;
   margin: 0 auto;
+  padding: 0 0 16px 0;
 `
 
 export const ChatContainer = styled.div`
@@ -120,20 +162,33 @@ export const ViewerBox = styled.div`
 `
 
 export const ChatButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: 1px solid black;
   cursor: pointer;
   color: white;
+  height: 52px;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
+`
+export const ChatButtonGroup = styled.div`
+  width: 100%;
+  display: flex;
+  padding: 16px 16px 0 16px;
+  height: auto;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(53, 253, 220);
+  line-height: 16px;
 `
 
 export const SubmitButton = styled.button`
-  background-color: rgb(0, 55, 128);
+  background-color: #3c82f6;
   outline: none;
-  border: 1px solid rgb(0, 55, 128);
+  border: 1px solid black;
   height: 48px;
   cursor: pointer;
   color: white;
@@ -143,6 +198,7 @@ export const SubmitButton = styled.button`
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
 `
 
 export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
