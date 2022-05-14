@@ -71,7 +71,11 @@ export const UserList = styled.div`
   width: 400px;
   max-height: 128px;
   border: 1px solid;
-  background-color: rgb(77, 168, 253, 0.6);
+  background-image: linear-gradient(
+    180deg,
+    rgba(77, 169, 255, 0.6) 17%,
+    rgba(172, 215, 255, 0.85) 88%
+  );
   padding: 8px;
   margin: 2px;
   display: flex;
@@ -140,7 +144,11 @@ export const Chat = styled.div`
   padding: 10px;
   width: 400px;
   height: 100%;
-  background-color: rgb(77, 168, 253, 0.6);
+  background-image: linear-gradient(
+    180deg,
+    rgba(77, 169, 255, 0.6) 17%,
+    rgba(172, 215, 255, 0.85) 88%
+  );
   display: flex;
   flex-direction: column;
   overflow-y: auto;

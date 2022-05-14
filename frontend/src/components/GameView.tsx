@@ -152,7 +152,7 @@ export const GameView: FunctionComponent<{
               <ContentPasteIcon />
             </SubmitButton>
             <StyledTitle>
-              Current word:{" "}
+              Current word:
               {currentUser?.client_id === myClientId
                 ? currentWord
                 : "<REDACTED>"}
