@@ -128,9 +128,9 @@ class GameRoom:
         self.users[client_id] = user
 
     def clear_commits(self):
-        commits = self.client.commit.list(self.stream.id, limit=50)
+        commits = self.speckle_manager.client.commit.list(self.stream.id, limit=50)
         for commit in commits:
-            self.client.commit.delete(self.stream.id, commit.id)
+            self.speckle_manager.client.commit.delete(self.stream.id, commit.id)
 
     async def broadcast(self, message: str):
         client_ids = self.users.keys()
