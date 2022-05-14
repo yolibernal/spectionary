@@ -14,7 +14,6 @@ import {
   MainContainer,
   StyledInput,
   StyledTitle,
-  SubmitButton,
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
@@ -72,7 +71,7 @@ export const GameView: FunctionComponent<{
       if (message.type === "new_commit") {
         setLatestCommitId(message.message || null)
       }
-      setMessages([...messages, message])
+      setMessages((messages) => [...messages, message])
     }
 
     if (!websocket) return
@@ -81,7 +80,7 @@ export const GameView: FunctionComponent<{
       const message = JSON.parse(e.data)
       handleReceivedMessage(message)
     }
-  }, [websocket, messages])
+  }, [websocket, messages, setMessages])
 
   const sendTextMessage = () => {
     if (!websocket || !message) {
@@ -111,7 +110,7 @@ export const GameView: FunctionComponent<{
       <GameViewContainer>
         <StyledTitle onClick={copyToClipboard}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            Click to copy room:
+            Click to copy room link:
             <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
           </div>
         </StyledTitle>
@@ -131,15 +130,6 @@ export const GameView: FunctionComponent<{
               width="800"
               height="500"
             />
-            <SubmitButton
-              onClick={async () => {
-                const response = await axios.get(`/latest-commit/${roomId}`)
-                const { data } = response
-                setLatestCommitId(data.latest_commit_id)
-              }}
-            >
-              Check for commits
-            </SubmitButton>
           </ViewerBox>
 
           <ChatContainer>

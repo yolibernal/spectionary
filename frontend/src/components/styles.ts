@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { Message } from "../Message"
 
 export const MainContainer = styled.div`
   display: flex;
@@ -27,13 +28,13 @@ export const JoinRoomViewContainer = styled.div`
   margin: auto auto;
   padding: 0 0 16px 0;
   & > * {
-    margin: 24px 0 24px 0;
+    margin: 12px 0 12px 0;
   }
   & > *:first-child {
-    margin: 0 0 24px 0;
+    margin: 0 0 12px 0;
   }
   & > *:last-child {
-    margin: 24px 0 0 0;
+    margin: 12px 0 0 0;
   }
 `
 
@@ -42,6 +43,9 @@ export const StyledInput = styled.input`
   color: #171821;
   font-size: 16px;
   padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
 `
 
 export const Divider = styled.div`
@@ -139,9 +143,41 @@ export const SubmitButton = styled.button`
   color: white;
   font-size: 16px;
   font-weight: bold;
+  padding: 0px 16px;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+`
+
+export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${({ type }) => {
+    if (type === "new_round") {
+      return "rgb(0, 55, 128)"
+    }
+    if (type === "new_commit") {
+      return "#3c82f6"
+    }
+    if (type === "solved") {
+      return "rgb(77, 253, 215)"
+    }
+    if (type === "timeout") {
+      return "rgb(178,34,34)"
+    }
+    return "rgb(0, 55, 128)"
+  }};
+  color: ${({ type }) => {
+    if (type === "solved") {
+      return "black"
+    }
+    return "white"
+  }};
+  border: 1px solid black;
+  box-shadow: 5px 5px black;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `
 
 export const TimerStyle = styled.div`
