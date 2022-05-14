@@ -105,15 +105,6 @@ h6 {
   justify-content: center;
 }
 
-.input-chat-container {
-  padding: 10px;
-  height: auto;
-  border: 1px solid black;
-  display: flex;
-  flex-direction: row;
-  background-color: rgb(53, 253, 220);
-}
-
 .input-chat {
   width: 100%;
   min-height: 25px;

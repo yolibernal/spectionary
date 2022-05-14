@@ -128,10 +128,22 @@ export const ChatButton = styled.button`
   border: 1px solid black;
   cursor: pointer;
   color: white;
+  height: 52px;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
   box-shadow: 5px 5px black;
+`
+export const ChatButtonGroup = styled.div`
+  width: 100%;
+  display: flex;
+  padding: 16px 16px 0 16px;
+  height: auto;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(53, 253, 220);
+  line-height: 16px;
 `
 
 export const SubmitButton = styled.button`

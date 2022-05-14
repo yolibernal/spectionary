@@ -7,6 +7,7 @@ import { Spectionary } from "./Spectionary"
 import {
   Chat,
   ChatButton,
+  ChatButtonGroup,
   ChatContainer,
   CopyRoom,
   GameBox,
@@ -142,7 +143,7 @@ export const GameView: FunctionComponent<{
                 />
               ))}
             </Chat>
-            <div className="input-chat-container">
+            <ChatButtonGroup>
               <StyledInput
                 className="input-chat"
                 type="text"
@@ -157,7 +158,7 @@ export const GameView: FunctionComponent<{
               />
               <ChatButton onClick={sendTextMessage}>Send</ChatButton>
               <ChatButton onClick={startNextRound}>Next round</ChatButton>
-            </div>
+            </ChatButtonGroup>
           </ChatContainer>
         </GameBox>
       </GameViewContainer>
