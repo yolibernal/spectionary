@@ -62,7 +62,7 @@ export const GameView: FunctionComponent<{
   }, [messages, roomId])
 
   useEffect(() => {
-    const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
+    const url = `wss://${window.location.hostname}/ws/${roomId}/${myClientId}`
     const ws = new WebSocket(url)
 
     ws.onopen = () => {
