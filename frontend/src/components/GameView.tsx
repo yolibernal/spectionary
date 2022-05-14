@@ -12,12 +12,17 @@ import {
   GameBox,
   GameViewContainer,
   MainContainer,
+  RoomInfo,
   StyledInput,
   StyledTitle,
   SubmitButton,
+  TitleRow,
+  UserEntry,
+  UserList,
   ViewerBox,
 } from "./styles"
 import { Timer } from "./Timer"
+import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
 
 export const GameView: FunctionComponent<{
   roomId: string
@@ -32,6 +37,17 @@ export const GameView: FunctionComponent<{
   const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+
+  const [allUsers, setAllUsers] = useState<User[]>([])
+
+  const fetchUsers = async () => {
+    const response = await axios.get(`/room/${roomId}/users`)
+    setAllUsers(Object.values(response.data.users))
+  }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [messages, roomId])
 
   useEffect(() => {
     const url = `ws://${window.location.hostname}:8000/ws/${roomId}/${myClientId}`
@@ -97,20 +113,36 @@ export const GameView: FunctionComponent<{
     navigator.clipboard.writeText(window.origin + "/" + roomId)
   }
 
+  const renderUsers = allUsers
+    .sort((a, b) => (a.points > b.points ? 1 : -1))
+    .map((user) => (
+      <UserEntry key={`user-${user.name}`}>
+        {user.name}
+        {[...Array(user.points)].map((i) => (
+          <StarTwoToneIcon key={`star-${user.name}-${i}`} />
+        ))}
+      </UserEntry>
+    ))
+
   return (
     <MainContainer>
       <Spectionary />
       <GameViewContainer>
-        <StyledTitle onClick={copyToClipboard}>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            Click to copy room:{" "}
-            <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
-          </div>
-        </StyledTitle>
-        <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
-        <StyledTitle>
-          Round Countdown: <Timer />
-        </StyledTitle>
+        <TitleRow>
+          <RoomInfo>
+            <StyledTitle onClick={copyToClipboard}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                Click to copy room:{" "}
+                <CopyRoom>{window.origin + "/" + roomId}</CopyRoom>
+              </div>
+            </StyledTitle>
+            <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+            <StyledTitle>
+              Round Countdown: <Timer />
+            </StyledTitle>
+          </RoomInfo>
+          <UserList>{renderUsers}</UserList>
+        </TitleRow>
         <GameBox>
           <ViewerBox>
             <iframe
