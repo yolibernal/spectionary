@@ -112,6 +112,10 @@ class GameRoom:
         self.stream = self.speckle_manager.initialize_stream()
 
     def add_client(self, name: str, client_id: str, speckle_email: str):
+        existing_user = self.get_user(client_id)
+        if existing_user is not None:
+            return
+
         speckle_user = self.speckle_manager.add_collaborators([speckle_email])[0]
 
         user = User(
