@@ -14,4 +14,5 @@ export type Message = {
   message?: string
   time?: string
   user?: User
+  word?: string
 }

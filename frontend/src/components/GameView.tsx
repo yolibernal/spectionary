@@ -41,6 +41,7 @@ export const GameView: FunctionComponent<{
   const [latestCommitId, setLatestCommitId] = useState<string | null>(null)
 
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [currentWord, setCurrentWord] = useState<string | null>(null)
 
   const [allUsers, setAllUsers] = useState<User[]>([])
 
@@ -82,6 +83,7 @@ export const GameView: FunctionComponent<{
       }
       if (message.type === "new_round" && message.user) {
         setCurrentUser(message.user)
+        setCurrentWord(message.word || null)
         setResetTimer(true)
         setStopTimer(false)
       }
@@ -145,6 +147,12 @@ export const GameView: FunctionComponent<{
               </div>
             </StyledTitle>
             <StyledTitle>Current turn: {currentUser?.name} </StyledTitle>
+            <StyledTitle>
+              Current word:{" "}
+              {currentUser?.client_id === myClientId
+                ? currentWord
+                : "<REDACTED>"}
+            </StyledTitle>
             <StyledTitle>
               Round Countdown:{" "}
               <Timer
