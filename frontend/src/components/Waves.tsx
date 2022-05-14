@@ -2,7 +2,7 @@ import { FunctionComponent } from "react"
 
 export const Waves: FunctionComponent = () => {
   return (
-    <div style={{ overflow: "hidden" }}>
+    <div style={{ overflow: "hidden", width: "100%" }}>
       <svg
         preserveAspectRatio="none"
         viewBox="0 0 1200 120"

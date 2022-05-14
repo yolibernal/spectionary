@@ -1,7 +1,7 @@
 import ContentPasteIcon from "@mui/icons-material/ContentPaste"
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone"
 import axios from "axios"
-import React, { FunctionComponent, useEffect, useState } from "react"
+import React, { FunctionComponent, useEffect, useRef, useState } from "react"
 import { Message } from "../Message"
 import { User } from "../User"
 import { MessageBubble } from "./MessageBubble"
@@ -46,6 +46,12 @@ export const GameView: FunctionComponent<{
 
   const [allUsers, setAllUsers] = useState<User[]>([])
 
+  const messagesEndRef = useRef<HTMLHeadingElement>(null)
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+  useEffect(scrollToBottom, [messages])
+
   const fetchUsers = async () => {
     const response = await axios.get(`/room/${roomId}/users`)
     setAllUsers(Object.values(response.data.users))
@@ -74,6 +80,7 @@ export const GameView: FunctionComponent<{
 
   useEffect(() => {
     const handleReceivedMessage = (message: Message) => {
+      console.log(message)
       if (message.type === "solved") {
         console.log("SOLVED by", message.user)
         setStopTimer(true)
@@ -125,7 +132,7 @@ export const GameView: FunctionComponent<{
   }
 
   const renderUsers = allUsers
-    .sort((a, b) => (a.points > b.points ? 1 : -1))
+    .sort((a, b) => (a.points > b.points ? 1 : a.name > b.name ? 1 : -1))
     .map((user) => (
       <UserEntry
         key={`user-${user.name}`}
@@ -188,6 +195,7 @@ export const GameView: FunctionComponent<{
                   key={index}
                 />
               ))}
+              <div ref={messagesEndRef} />
             </Chat>
             <ChatButtonGroup>
               <StyledInput
