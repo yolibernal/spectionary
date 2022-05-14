@@ -43,7 +43,7 @@ export const InputUser: FunctionComponent<Props> = ({
             const response = await axios.post("/join-room", {
               client_id: clientId,
               room_id: roomId,
-              speckle_email: speckleEmail,
+              speckle_email: speckleEmail.toLowerCase(),
               name: name,
             })
             const { room_id, stream_id } = response.data

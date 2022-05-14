@@ -6,7 +6,7 @@ export const MainContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   padding: 16px 0 0 0;
   overflow-y: scroll;
 `
@@ -142,7 +142,6 @@ export const ChatContainer = styled.div`
 
 export const Chat = styled.div`
   padding: 10px;
-  width: 400px;
   height: 100%;
   background-image: linear-gradient(
     180deg,

@@ -41,12 +41,13 @@ export const CreateRoom: FunctionComponent<Props> = ({
             client_id: clientId,
             access_token: accessToken,
             stream_name: streamName,
-            speckle_email: speckleEmail,
+            speckle_email: speckleEmail.toLowerCase(),
             name: name,
           })
           const { room_id, stream_id } = response.data
           setRoomId(room_id)
           setStreamId(stream_id)
+          window.history.replaceState(null, "Spectionary", `?roomId=${room_id}`)
         }}
       >
         Create Game Room
