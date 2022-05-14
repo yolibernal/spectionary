@@ -125,19 +125,19 @@ export const ViewerBox = styled.div`
 export const ChatButton = styled.button`
   background-color: #3c82f6;
   outline: none;
-  border: none;
+  border: 1px solid black;
   cursor: pointer;
   color: white;
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
 `
 
 export const SubmitButton = styled.button`
   background-color: #3c82f6;
-
   outline: none;
-  border: none;
+  border: 1px solid black;
   height: 48px;
   cursor: pointer;
   color: white;
@@ -147,6 +147,7 @@ export const SubmitButton = styled.button`
   &:hover {
     background-color: rgb(16, 108, 230);
   }
+  box-shadow: 5px 5px black;
 `
 
 export const StatusMessageBubble = styled.div<{ type: Message["type"] }>`
