@@ -197,7 +197,7 @@ class GameRoom:
 
         if self.current_solution is None:
             return
-        if message.get("message", None) != self.current_solution:
+        if message.get("message", None).lower() != self.current_solution.lower():
             return
 
         user.points = user.points + 1
